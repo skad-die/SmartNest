@@ -10,4 +10,7 @@
     <string name="full_name">Full Name</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="sign_up">Sign Up</string>
+    <string name="logout">Logout</string>
+    <string name="pass_len_condition">Password must be at least 6 characters long</string>
+    <string name="passwords_mismatch">Passwords do not match</string>
 </resources>

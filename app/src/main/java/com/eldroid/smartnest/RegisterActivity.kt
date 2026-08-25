@@ -8,14 +8,18 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var tvRegisterError: TextView
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_register)
+
+        auth = FirebaseAuth.getInstance()
 
         val etName = findViewById<EditText>(R.id.etName)
         val etEmail = findViewById<EditText>(R.id.etEmail)
@@ -47,20 +51,26 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             if (password.length < 6) {
-                tvRegisterError.text = "Password must be at least 6 characters long"
+                tvRegisterError.text = getString(R.string.pass_len_condition)
                 return@setOnClickListener
             }
 
             if (password != confirmPassword) {
-                tvRegisterError.text = "Passwords do not match"
+                tvRegisterError.text = getString(R.string.passwords_mismatch)
                 return@setOnClickListener
             }
 
-            Toast.makeText(this, "Registration Successful!", Toast.LENGTH_SHORT).show()
-
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(this, "Registration Successful!", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this, LoginActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        tvRegisterError.text = task.exception?.message ?: "Registration failed"
+                    }
+                }
         }
 
         btnGoToLogin.setOnClickListener {
