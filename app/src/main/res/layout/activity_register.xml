@@ -148,7 +148,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/progressBar"
         android:layout_marginTop="4dp"
-        android:text="Already have an account? Log In"
+        android:text="@string/existing_account_message"
         android:textAllCaps="false"
         style="?android:attr/borderlessButtonStyle"
         android:textColor="?android:attr/colorPrimary"
