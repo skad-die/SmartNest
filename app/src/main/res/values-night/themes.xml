@@ -2,6 +2,10 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.SmartNest" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">@color/smartnest_primary</item>
+        <item name="colorOnPrimary">@color/smartnest_on_primary</item>
+        <item name="colorSecondary">@color/smartnest_secondary</item>
+        <item name="colorOnSecondary">@color/smartnest_on_secondary</item>
+        <item name="colorTertiary">@color/smartnest_tertiary</item>
     </style>
 </resources>

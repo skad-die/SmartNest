@@ -68,6 +68,14 @@ class DashboardPresenter(
         listenerRef = null
     }
 
+    override fun onDrawerOpened() {
+        val email = auth.currentUser?.email ?: "Unknown user"
+        view?.showUserEmail(email)
+
+        val name = auth.currentUser?.displayName
+        view?.showUserName(if (name.isNullOrBlank()) "SmartNest User" else name)
+    }
+
     override fun onLogoutClicked() {
         stopListening()
         auth.signOut()

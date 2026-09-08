@@ -8,6 +8,8 @@ interface DashboardContract {
         fun showSensorReading(reading: SensorReading)
         fun showDeviceOffline()
         fun showLoadError(message: String)
+        fun showUserEmail(email: String)
+        fun showUserName(name: String)
         fun navigateToLogin()
     }
 
@@ -16,6 +18,7 @@ interface DashboardContract {
         fun detachView()
         fun startListening()
         fun stopListening()
+        fun onDrawerOpened()
         fun onLogoutClicked()
     }
 }

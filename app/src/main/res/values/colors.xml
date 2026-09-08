@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="smartnest_primary">#F2A73D</color>
+    <color name="smartnest_primary_dark">#C4841F</color>
+    <color name="smartnest_on_primary">#2B1D00</color>
+    <color name="smartnest_secondary">#3F8E86</color>
+    <color name="smartnest_on_secondary">#FFFFFF</color>
+    <color name="smartnest_tertiary">#8A5A34</color>
 </resources>
