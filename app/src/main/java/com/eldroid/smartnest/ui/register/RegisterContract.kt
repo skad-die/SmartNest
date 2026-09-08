@@ -7,7 +7,8 @@ interface RegisterContract {
         fun clearError()
         fun showLoading()
         fun hideLoading()
-        fun navigateToLogin()
+        fun navigateToLoginAfterCancel()
+        fun navigateToLoginAfterSuccess()
         fun showRegistrationError(message: String)
         fun showRegistrationSuccess()
     }

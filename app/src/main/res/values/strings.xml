@@ -1,20 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- App -->
     <string name="app_name">SmartNest</string>
-    <string name="sign_in">Sign In</string>
-    <string name="create_account">Create Account</string>
+    <string name="placeholder_dash">\u2014</string>
+
+    <!-- Shared: fields, actions, validation -->
     <string name="email">Email Address</string>
     <string name="password">Password</string>
-    <string name="login">Log In</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="full_name">Full Name</string>
+    <string name="logout">Logout</string>
     <string name="all_fields_required">Please fill out all fields.</string>
     <string name="invalid_email_format">Please enter a valid email address.</string>
-    <string name="full_name">Full Name</string>
-    <string name="confirm_password">Confirm Password</string>
-    <string name="sign_up">Sign Up</string>
-    <string name="logout">Logout</string>
     <string name="pass_len_condition">Password must be at least 6 characters long</string>
-    <string name="passwords_mismatch">Passwords do not match</string>
     <string name="pass_complexity_condition">Password must contain at least one letter and one number</string>
     <string name="pass_no_spaces">Password cannot contain spaces</string>
+    <string name="passwords_mismatch">Passwords do not match</string>
+
+    <!-- Login -->
+    <string name="sign_in">Sign In</string>
+    <string name="login">Log In</string>
+    <string name="forgot_password">Forgot Password?</string>
+
+    <!-- Register -->
+    <string name="create_account">Create Account</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="existing_account_message">Already have an account? Log In</string>
+
+    <!-- Forgot Password -->
+    <string name="forgot_password_title">Reset Password</string>
+    <string name="forgot_password_subtitle">Enter your email and we\'ll send you a link to reset your password.</string>
+    <string name="send_reset_link">Send Reset Link</string>
+    <string name="back_to_login">Back to Log In</string>
+    <string name="reset_link_sent_message">If an account exists with this email, a reset link has been sent.</string>
+
+    <!-- Dashboard -->
     <string name="dashboard_title">Cage Overview</string>
     <string name="device_offline">Device Offline</string>
     <string name="device_online">Device Online</string>
@@ -26,14 +47,20 @@
     <string name="air_quality_value">%.1f ppm</string>
     <string name="tray_status_label">Tray Status</string>
     <string name="last_updated">Last updated: %s</string>
-    <string name="placeholder_dash">\u2014</string>
-    <string name="forgot_password_title">Reset Password</string>
-    <string name="forgot_password_subtitle">Enter your email and we\'ll send you a link to reset your password.</string>
-    <string name="send_reset_link">Send Reset Link</string>
-    <string name="back_to_login">Back to Log In</string>
-    <string name="reset_link_sent_message">If an account exists with this email, a reset link has been sent.</string>
-    <string name="forgot_password">Forgot Password?</string>
-    <string name="existing_account_message">Already have an account? Log In</string>
+
+    <!-- Navigation drawer -->
     <string name="nav_settings">Settings</string>
     <string name="nav_logout">Logout</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="change_password_row_subtitle">Update the password used to log in</string>
+
+    <!-- Change Password -->
+    <string name="change_password_title">Change Password</string>
+    <string name="current_password">Current Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="update_password">Update Password</string>
+
 </resources>

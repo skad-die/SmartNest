@@ -1,6 +1,5 @@
 package com.eldroid.smartnest.ui.forgotpassword
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View as AndroidView
 import android.view.inputmethod.InputMethodManager
@@ -11,7 +10,6 @@ import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.eldroid.smartnest.R
-import com.eldroid.smartnest.ui.login.LoginActivity
 
 class ForgotPasswordActivity : AppCompatActivity(), ForgotPasswordContract.View {
 
@@ -77,7 +75,6 @@ class ForgotPasswordActivity : AppCompatActivity(), ForgotPasswordContract.View 
     }
 
     override fun navigateToLogin() {
-        startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }
 

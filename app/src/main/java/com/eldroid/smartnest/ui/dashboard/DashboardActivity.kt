@@ -14,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.eldroid.smartnest.R
 import com.eldroid.smartnest.data.model.SensorReading
 import com.eldroid.smartnest.ui.login.LoginActivity
+import com.eldroid.smartnest.ui.settings.SettingsActivity
 import com.google.android.material.navigation.NavigationView
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -52,7 +53,6 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         tvDrawerUserEmail = navView.getHeaderView(0).findViewById(R.id.tvDrawerUserEmail)
         tvDrawerUserName = navView.getHeaderView(0).findViewById(R.id.tvDrawerUserName)
         val drawerProfileCard = navView.getHeaderView(0).findViewById<android.view.View>(R.id.drawerProfileCard)
-
         val basePaddingLeft = drawerProfileCard.paddingLeft
         val basePaddingTop = drawerProfileCard.paddingTop
         val basePaddingRight = drawerProfileCard.paddingRight
@@ -72,7 +72,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         }
 
         presenter.attachView(this)
-        presenter.onDrawerOpened()
+        presenter.onDrawerOpened() // populate name/email immediately, not only on open
 
         toolbar.setNavigationOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
@@ -85,6 +85,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         })
 
         drawerProfileCard.setOnClickListener {
+            // User profile screen not built yet.
             Toast.makeText(this, "User profile coming soon", Toast.LENGTH_SHORT).show()
             drawerLayout.closeDrawer(GravityCompat.START)
         }
@@ -92,7 +93,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         navView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_settings -> {
-                    Toast.makeText(this, "Settings coming soon", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, SettingsActivity::class.java))
                 }
                 R.id.nav_logout -> {
                     presenter.onLogoutClicked()
@@ -125,7 +126,6 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             super.onBackPressed()
         }
     }
-
 
     override fun showSensorReading(reading: SensorReading) {
         tvTemperature.text = getString(R.string.temperature_value, reading.temperatureCelsius)

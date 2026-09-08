@@ -81,8 +81,14 @@ class RegisterActivity : AppCompatActivity(), RegisterContract.View {
         btnRegister.isEnabled = true
     }
 
-    override fun navigateToLogin() {
-        startActivity(Intent(this, LoginActivity::class.java))
+    override fun navigateToLoginAfterCancel() {
+        finish()
+    }
+
+    override fun navigateToLoginAfterSuccess() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
         finish()
     }
 
@@ -91,8 +97,8 @@ class RegisterActivity : AppCompatActivity(), RegisterContract.View {
     }
 
     override fun showRegistrationSuccess() {
-        Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
-        navigateToLogin()
+        Toast.makeText(this, "Registration successful! Please log in.", Toast.LENGTH_SHORT).show()
+        navigateToLoginAfterSuccess()
     }
 
     private fun hideKeyboard() {

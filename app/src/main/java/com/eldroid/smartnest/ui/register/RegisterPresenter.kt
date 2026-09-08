@@ -67,13 +67,10 @@ class RegisterPresenter(
                         .setDisplayName(trimmedName)
                         .build()
                     auth.currentUser?.updateProfile(profileUpdate)
-                        ?.addOnCompleteListener { profileTask ->
+                        ?.addOnCompleteListener {
                             view?.hideLoading()
-                            if (profileTask.isSuccessful) {
-                                view?.showRegistrationSuccess()
-                            } else {
-                                view?.showRegistrationError("Account created, but failed to set display name.")
-                            }
+                            auth.signOut()
+                            view?.showRegistrationSuccess()
                         }
                 } else {
                     view?.hideLoading()
@@ -89,6 +86,6 @@ class RegisterPresenter(
     }
 
     override fun onLoginLinkClicked() {
-        view?.navigateToLogin()
+        view?.navigateToLoginAfterCancel()
     }
 }

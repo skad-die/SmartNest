@@ -96,7 +96,6 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
 
     override fun navigateToRegister() {
         startActivity(Intent(this, RegisterActivity::class.java))
-        finish()
     }
 
     override fun navigateToForgotPassword() {
