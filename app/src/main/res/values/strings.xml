@@ -49,8 +49,33 @@
     <string name="last_updated">Last updated: %s</string>
 
     <!-- Navigation drawer -->
+    <string name="nav_setup_device">Setup Device</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_logout">Logout</string>
+
+    <!-- Setup Device & Hub Management -->
+    <string name="setup_device_title">Device Management</string>
+    <string name="smart_nest_hubs">SmartNest Hubs</string>
+    <string name="hubs_subtitle">Select a paired device to update Wi-Fi settings</string>
+    <string name="add_new_device">+ Add New</string>
+    <string name="configured_devices">Configured Devices</string>
+    <string name="scanning_local_networks">Scanning local networks…</string>
+    <string name="select_target_wifi">Select Target Wi-Fi</string>
+    <string name="enter_network_security_key">Enter network security key</string>
+    <string name="target_network">Target Network</string>
+    <string name="password_field_hint">Password</string>
+    <string name="back_button_text">Back</string>
+    <string name="update_wifi_button">Update Wi-Fi</string>
+    <string name="setup_device_instructions">Make sure your SmartNest device is powered on and nearby. Bluetooth will be used to find it and set up its Wi-Fi.</string>
+    <string name="searching_for_device">Searching for your SmartNest device…</string>
+    <string name="device_connected">Connected to %s</string>
+    <string name="bluetooth_permission_denied">Bluetooth permission is required to set up your device.</string>
+    <string name="available_networks">Available networks</string>
+    <string name="rescan">Refresh</string>
+    <string name="network_name">Network Name (SSID)</string>
+    <string name="network_password">Network Password</string>
+    <string name="connect_device">Connect Device</string>
+    <string name="secured_network">Secured network</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
@@ -62,5 +87,16 @@
     <string name="new_password">New Password</string>
     <string name="confirm_new_password">Confirm New Password</string>
     <string name="update_password">Update Password</string>
+
+    <string name="connected_to_network">Connected to: %s</string>
+    <string name="no_devices_yet">No devices yet</string>
+    <string name="no_devices_yet_subtitle">Tap \"+ Add New\" to set up your first SmartNest hub</string>
+    <string name="updating_wifi_credentials">Updating device Wi-Fi credentials\u2026</string>
+    <string name="connection_failed_try_again">Connection failed. Try again.</string>
+    <string name="wifi_updated_successfully">Wi-Fi updated successfully!</string>
+
+    <string name="no_networks_found">No networks found</string>
+    <string name="no_networks_found_subtitle">The device didn\'t report any nearby Wi-Fi networks. Try scanning again.</string>
+
 
 </resources>
