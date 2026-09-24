@@ -10,14 +10,12 @@ import android.bluetooth.BluetoothProfile
 import android.bluetooth.BluetoothStatusCodes
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.os.ParcelUuid
 import java.util.ArrayDeque
 import java.util.UUID
 
@@ -60,14 +58,11 @@ class EspBleProvisioningClient(private val context: Context) {
         scanning = true
         this.targetMacAddress = targetMacAddress
 
-        // Broad scan filter configuration to catch all variants of advertising names
         val settings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
             .build()
 
-        // Passing empty list or no strict service filter ensures compatibility if firmware advertises manufacturer data instead
         bluetoothLeScanner.startScan(null, settings, scanCallback)
-
         handler.postDelayed({ stopScan() }, SCAN_TIMEOUT_MS)
     }
 
@@ -89,7 +84,6 @@ class EspBleProvisioningClient(private val context: Context) {
 
             val target = targetMacAddress
             if (target != null && !result.device.address.equals(target, ignoreCase = true)) {
-                // Re-provisioning a specific device — ignore any other SmartNest unit nearby.
                 return
             }
 
@@ -133,6 +127,12 @@ class EspBleProvisioningClient(private val context: Context) {
         }
     }
 
+    /**
+     * Sends Wi-Fi credentials only. Under Option A, the ESP32 authenticates
+     * to Firebase using the same account credentials baked into its own
+     * secrets.h (matching the app user's Firebase login) -- no per-device
+     * email/password/UID is sent over BLE.
+     */
     @SuppressLint("MissingPermission")
     fun sendCredentials(ssid: String, password: String) {
         val service = gatt?.getService(SERVICE_UUID)
@@ -189,7 +189,10 @@ class EspBleProvisioningClient(private val context: Context) {
         override fun onServicesDiscovered(g: BluetoothGatt, status: Int) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    g.requestMtu(512)
+                    val requested = g.requestMtu(512)
+                    if (!requested) {
+                        proceedWithNotifications(g)
+                    }
                 } else {
                     proceedWithNotifications(g)
                 }
@@ -230,7 +233,12 @@ class EspBleProvisioningClient(private val context: Context) {
             g.setCharacteristicNotification(characteristic, true)
 
             val cccdUuid = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
-            val descriptor = characteristic.getDescriptor(cccdUuid) ?: return
+            val descriptor = characteristic.getDescriptor(cccdUuid)
+
+            if (descriptor == null) {
+                processNextNotificationInQueue(g)
+                return
+            }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 g.writeDescriptor(descriptor, BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)

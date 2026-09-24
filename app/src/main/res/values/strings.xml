@@ -97,6 +97,24 @@
 
     <string name="no_networks_found">No networks found</string>
     <string name="no_networks_found_subtitle">The device didn\'t report any nearby Wi-Fi networks. Try scanning again.</string>
+    <string name="nav_led_control">LED Control</string>
+
+    <string name="led_control_title">LED Control</string>
+    <string name="device_status_checking">Checking device status\u2026</string>
+    <string name="device_status_online">Device Online</string>
+    <string name="device_status_offline">Device Offline</string>
+    <string name="device_status_unavailable">Device Unavailable</string>
+    <string name="led_status_unknown">Unknown</string>
+    <string name="led_status_on">LED is ON</string>
+    <string name="led_status_off">LED is OFF</string>
+    <string name="actual_device_reported_status">Actual status reported by device</string>
+    <string name="turn_on">Turn On</string>
+    <string name="turn_off">Turn Off</string>
+    <string name="sending_command">Sending command\u2026</string>
+    <string name="command_sent_on">You requested: ON</string>
+    <string name="command_sent_off">You requested: OFF</string>
+    <string name="last_updated_short">Updated %s</string>
+
 
 
 </resources>

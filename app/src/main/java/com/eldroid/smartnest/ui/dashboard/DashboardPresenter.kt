@@ -81,4 +81,8 @@ class DashboardPresenter(
         auth.signOut()
         view?.navigateToLogin()
     }
+
+    override fun getSelectedDeviceUid(): String? {
+        return auth.currentUser?.uid
+    }
 }

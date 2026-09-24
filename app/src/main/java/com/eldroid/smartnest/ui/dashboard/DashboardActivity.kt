@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.eldroid.smartnest.R
 import com.eldroid.smartnest.data.model.SensorReading
+import com.eldroid.smartnest.ui.ledcontrol.LedControlActivity
 import com.eldroid.smartnest.ui.login.LoginActivity
 import com.eldroid.smartnest.ui.settings.SettingsActivity
 import com.eldroid.smartnest.ui.setupdevice.SetupDeviceActivity
@@ -54,9 +55,6 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         tvDrawerUserEmail = navView.getHeaderView(0).findViewById(R.id.tvDrawerUserEmail)
         tvDrawerUserName = navView.getHeaderView(0).findViewById(R.id.tvDrawerUserName)
         val drawerProfileCard = navView.getHeaderView(0).findViewById<android.view.View>(R.id.drawerProfileCard)
-
-        // Push the header down below the status bar / camera cutout,
-        // since it sits at the top of the drawer with no toolbar above it.
         val basePaddingLeft = drawerProfileCard.paddingLeft
         val basePaddingTop = drawerProfileCard.paddingTop
         val basePaddingRight = drawerProfileCard.paddingRight
@@ -67,11 +65,6 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             insets
         }
 
-        // Same fix for the main toolbar, which sits at the very top
-        // of the screen under enableEdgeToEdge() with nothing above it.
-        // Applied as top MARGIN (not padding) so the toolbar's fixed
-        // actionBarSize height isn't squeezed by the inset — the whole
-        // toolbar block shifts down instead of its content getting cramped.
         ViewCompat.setOnApplyWindowInsetsListener(toolbar) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             val params = view.layoutParams as android.view.ViewGroup.MarginLayoutParams
@@ -81,7 +74,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         }
 
         presenter.attachView(this)
-        presenter.onDrawerOpened() // populate name/email immediately, not only on open
+        presenter.onDrawerOpened()
 
         toolbar.setNavigationOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
@@ -94,7 +87,6 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         })
 
         drawerProfileCard.setOnClickListener {
-            // User profile screen not built yet.
             Toast.makeText(this, "User profile coming soon", Toast.LENGTH_SHORT).show()
             drawerLayout.closeDrawer(GravityCompat.START)
         }
@@ -103,6 +95,9 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             when (item.itemId) {
                 R.id.nav_setup_device -> {
                     startActivity(Intent(this, SetupDeviceActivity::class.java))
+                }
+                R.id.nav_led_control -> {
+                    startActivity(Intent(this, LedControlActivity::class.java))
                 }
                 R.id.nav_settings -> {
                     startActivity(Intent(this, SettingsActivity::class.java))
@@ -114,6 +109,8 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
+
+
     }
 
     override fun onStart() {
@@ -138,8 +135,6 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             super.onBackPressed()
         }
     }
-
-    // ---- DashboardContract.View implementation ----
 
     override fun showSensorReading(reading: SensorReading) {
         tvTemperature.text = getString(R.string.temperature_value, reading.temperatureCelsius)

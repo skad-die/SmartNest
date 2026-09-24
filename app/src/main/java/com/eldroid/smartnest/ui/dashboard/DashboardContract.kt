@@ -20,5 +20,6 @@ interface DashboardContract {
         fun stopListening()
         fun onDrawerOpened()
         fun onLogoutClicked()
+        fun getSelectedDeviceUid(): String?
     }
 }

@@ -3,10 +3,10 @@ package com.eldroid.smartnest.ui.forgotpassword
 interface ForgotPasswordContract {
 
     interface View {
-        fun showError(message: String)
-        fun clearError()
         fun showLoading()
         fun hideLoading()
+        fun showError(message: String)
+        fun clearError()
         fun showRequestSentMessage()
         fun navigateToLogin()
     }

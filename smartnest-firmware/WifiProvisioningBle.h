@@ -16,11 +16,19 @@
 #define NETWORKS_CHAR_UUID     "6e400005-b5a3-f393-e0a9-e50e24dcca9e"
 #define MAX_REPORTED_NETWORKS 8
 
+#define RESET_BUTTON_PIN       0     // BOOT button 
+#define HOLD_TIME_MS           5000  
+#define STATUS_LED_PIN         2     
+
 class WifiProvisioningBle {
 public:
     void begin() {
+        pinMode(RESET_BUTTON_PIN, INPUT_PULLUP);
+        pinMode(STATUS_LED_PIN, OUTPUT);
+
         preferences.begin("wifi-config", false);
         String savedSsid = preferences.getString("ssid", "");
+        preferences.end();
 
         if (savedSsid.length() > 0) {
             connectToSavedNetwork(savedSsid);
@@ -30,6 +38,8 @@ public:
     }
 
     void loop() {
+        checkResetButton();
+
         if (hasPendingScan) {
             hasPendingScan = false;
             performScan();
@@ -48,6 +58,24 @@ public:
         return WiFi.status() == WL_CONNECTED;
     }
 
+    void clearCredentialsAndReset() {
+        Serial.println("\n*** Factory Reset Triggered ***");
+        Serial.println("Clearing stored Wi-Fi credentials from NVS Flash...");
+
+        preferences.begin("wifi-config", false);
+        preferences.clear(); 
+        preferences.end();
+
+        for (int i = 0; i < 10; i++) {
+            digitalWrite(STATUS_LED_PIN, !digitalRead(STATUS_LED_PIN));
+            delay(50);
+        }
+
+        Serial.println("Reset complete. Restarting ESP32 into BLE provisioning mode...");
+        delay(500);
+        ESP.restart();
+    }
+
 private:
     Preferences preferences;
     bool provisioningActive = false;
@@ -61,8 +89,36 @@ private:
     BLECharacteristic *networksCharacteristic = nullptr;
     BLEServer *server = nullptr;
 
+    void checkResetButton() {
+        if (digitalRead(RESET_BUTTON_PIN) == LOW) {
+            unsigned long pressStart = millis();
+            bool confirmed = true;
+
+            Serial.println("\nReset button pressed! Hold for 5 seconds to clear Wi-Fi settings...");
+
+            while (millis() - pressStart < HOLD_TIME_MS) {
+                digitalWrite(STATUS_LED_PIN, (millis() / 100) % 2 == 0 ? HIGH : LOW);
+
+                if (digitalRead(RESET_BUTTON_PIN) == HIGH) {
+                    Serial.println("Reset cancelled (button released early).");
+                    digitalWrite(STATUS_LED_PIN, LOW); // Turn off indicator
+                    confirmed = false;
+                    break;
+                }
+                delay(10);
+            }
+
+            if (confirmed) {
+                clearCredentialsAndReset();
+            }
+        }
+    }
+
     void connectToSavedNetwork(const String &ssid) {
+        preferences.begin("wifi-config", true);
         String password = preferences.getString("password", "");
+        preferences.end();
+
         Serial.printf("Connecting to saved network: %s\n", ssid.c_str());
 
         WiFi.mode(WIFI_STA);
@@ -72,6 +128,7 @@ private:
         const unsigned long timeoutMs = 15000;
 
         while (WiFi.status() != WL_CONNECTED && millis() - startAttempt < timeoutMs) {
+            checkResetButton(); 
             delay(300);
             Serial.print(".");
         }
@@ -95,7 +152,7 @@ private:
         snprintf(deviceName, sizeof(deviceName), "SmartNest-%02X%02X", mac[4], mac[5]);
 
         BLEDevice::init(deviceName);
-        BLEDevice::setMTU(512); 
+        BLEDevice::setMTU(512);
 
         server = BLEDevice::createServer();
         server->setCallbacks(new ServerCallbacks(this));
@@ -178,10 +235,12 @@ private:
         }
 
         if (WiFi.status() == WL_CONNECTED) {
+            preferences.begin("wifi-config", false);
             preferences.putString("ssid", ssid);
             preferences.putString("password", password);
+            preferences.end();
             reportStatus("connected");
-            delay(500); 
+            delay(500);
             ESP.restart();
         } else {
             reportStatus("connect_failed");
@@ -196,7 +255,7 @@ private:
         WiFi.disconnect();
         delay(100);
 
-        WiFi.scanNetworks(true, true); 
+        WiFi.scanNetworks(true, true);
 
         unsigned long startScanTime = millis();
         while (WiFi.scanComplete() == WIFI_SCAN_RUNNING && millis() - startScanTime < 10000) {
@@ -243,29 +302,19 @@ private:
     class ServerCallbacks : public BLEServerCallbacks {
     public:
         explicit ServerCallbacks(WifiProvisioningBle *owner) : owner(owner) {}
-
-        void onConnect(BLEServer *pServer) override {
-            owner->onClientConnected();
-        }
-
-        void onDisconnect(BLEServer *pServer) override {
-            owner->onClientDisconnected();
-        }
-
+        void onConnect(BLEServer *pServer) override { owner->onClientConnected(); }
+        void onDisconnect(BLEServer *pServer) override { owner->onClientDisconnected(); }
     private:
         WifiProvisioningBle *owner;
     };
 
-
     class CredentialsWriteCallback : public BLECharacteristicCallbacks {
     public:
         explicit CredentialsWriteCallback(WifiProvisioningBle *owner) : owner(owner) {}
-
         void onWrite(BLECharacteristic *characteristic) override {
             owner->pendingCredentialsValue = String(characteristic->getValue().c_str());
             owner->hasPendingCredentials = true;
         }
-
     private:
         WifiProvisioningBle *owner;
     };
@@ -273,11 +322,9 @@ private:
     class ScanTriggerWriteCallback : public BLECharacteristicCallbacks {
     public:
         explicit ScanTriggerWriteCallback(WifiProvisioningBle *owner) : owner(owner) {}
-
         void onWrite(BLECharacteristic *characteristic) override {
             owner->hasPendingScan = true;
         }
-
     private:
         WifiProvisioningBle *owner;
     };
