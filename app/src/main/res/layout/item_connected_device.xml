@@ -50,6 +50,15 @@
             android:text="Change Wi-Fi"
             android:textSize="12sp" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUnpair"
+            style="?attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unpair"
+            android:textColor="?attr/colorError"
+            android:textSize="12sp" />
+
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

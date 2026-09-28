@@ -35,5 +35,6 @@ interface SetupDeviceContract {
         fun onConnectClicked(ssid: String, password: String)
         fun onChangeWifiClicked(device: SmartNestDevice)
         fun onScreenClosed()
+        fun onUnpairClicked(device: SmartNestDevice)
     }
 }

@@ -69,6 +69,17 @@ class SetupDevicePresenter(
         onScreenOpened()
     }
 
+    override fun onUnpairClicked(device: SmartNestDevice) {
+        view?.showConfiguring()
+        deviceRegistry.unpairDevice(device) { success, error ->
+            if (success) {
+                view?.showConfigureSuccess()
+            } else {
+                view?.showRegistryError(error ?: "Couldn't unpair this device.")
+            }
+        }
+    }
+
     override fun onPermissionsGranted() {
         startDeviceSearch()
     }
@@ -110,21 +121,30 @@ class SetupDevicePresenter(
 
         val trimmedSsid = ssid.trim()
         val trimmedPassword = password.trim()
+        val ownerUid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid
+        val deviceMac = foundDevice?.address
 
         if (trimmedSsid.isEmpty()) {
             view?.showConfigureError("Please select or enter a network name.")
             return
         }
 
-        if (!connectedToDevice) {
+        if (!connectedToDevice || deviceMac == null) {
             view?.showConfigureError("Not connected to the device yet. Please wait or try rescanning.")
+            return
+        }
+
+        if (ownerUid == null) {
+            view?.showConfigureError("You must be signed in to pair a device.")
             return
         }
 
         lastSubmittedSsid = trimmedSsid
         provisioningResolved = false
         view?.showConfiguring()
-        bleClient.sendCredentials(trimmedSsid, trimmedPassword)
+
+        // Pass deviceMac as the 4th parameter to ensure strict synchronization with ESP32 status paths
+        bleClient.sendCredentials(trimmedSsid, trimmedPassword, ownerUid, deviceMac)
     }
 
     override fun onDeviceFound(device: BluetoothDevice, name: String) {

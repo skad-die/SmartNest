@@ -6,7 +6,9 @@ interface DashboardContract {
 
     interface View {
         fun showSensorReading(reading: SensorReading)
+        fun showDeviceOnline()
         fun showDeviceOffline()
+        fun showNoDevicePaired()
         fun showLoadError(message: String)
         fun showUserEmail(email: String)
         fun showUserName(name: String)
@@ -20,5 +22,6 @@ interface DashboardContract {
         fun stopListening()
         fun onDrawerOpened()
         fun onLogoutClicked()
+        fun getSelectedDeviceUid(): String?
     }
 }

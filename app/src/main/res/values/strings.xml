@@ -97,6 +97,16 @@
 
     <string name="no_networks_found">No networks found</string>
     <string name="no_networks_found_subtitle">The device didn\'t report any nearby Wi-Fi networks. Try scanning again.</string>
-
+    <string name="device_status_checking">Checking device status\u2026</string>
+    <string name="device_status_online">Device Online</string>
+    <string name="device_status_offline">Device Offline</string>
+    <string name="device_status_unavailable">Device Unavailable</string>
+    <string name="led_status_unknown">Unknown</string>
+    <string name="actual_device_reported_status">Actual status reported by device</string>
+    <string name="last_updated_short">Updated %s</string>
+    <string name="no_device_paired">No device paired yet</string>
+    <string name="unpair_title">Unpair Device</string>
+    <string name="unpair_message">Are you sure you want to unpair %s? This will remove it from your account.</string>
+    <string name="unpair">Unpair</string>
 
 </resources>
