@@ -44,9 +44,6 @@ object AuthValidator {
         if (password.length < MIN_PASSWORD_LENGTH) {
             return ValidationResult.Invalid("Password must be at least $MIN_PASSWORD_LENGTH characters")
         }
-        if (password.contains(" ")) {
-            return ValidationResult.Invalid("Password cannot contain spaces")
-        }
         if (!password.any { it.isLetter() } || !password.any { it.isDigit() }) {
             return ValidationResult.Invalid("Password must include at least one letter and one number")
         }
