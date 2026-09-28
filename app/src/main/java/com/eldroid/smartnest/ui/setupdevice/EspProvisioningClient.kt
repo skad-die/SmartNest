@@ -1,6 +1,8 @@
 package com.eldroid.smartnest.ui.setupdevice
 
 import android.annotation.SuppressLint
+import com.google.firebase.auth.FirebaseAuth
+import org.json.JSONObject
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
@@ -127,14 +129,8 @@ class EspBleProvisioningClient(private val context: Context) {
         }
     }
 
-    /**
-     * Sends Wi-Fi credentials only. Under Option A, the ESP32 authenticates
-     * to Firebase using the same account credentials baked into its own
-     * secrets.h (matching the app user's Firebase login) -- no per-device
-     * email/password/UID is sent over BLE.
-     */
     @SuppressLint("MissingPermission")
-    fun sendCredentials(ssid: String, password: String) {
+    fun sendCredentials(ssid: String, password: String, ownerUid: String, macAddress: String) {
         val service = gatt?.getService(SERVICE_UUID)
         val characteristic = service?.getCharacteristic(CREDENTIALS_CHAR_UUID)
 
@@ -143,7 +139,8 @@ class EspBleProvisioningClient(private val context: Context) {
             return
         }
 
-        val payload = "$ssid|$password".toByteArray(Charsets.UTF_8)
+        // Include device MAC address as the 4th parameter in payload format: ssid|password|ownerUid|macAddress
+        val payload = "$ssid|$password|$ownerUid|$macAddress".toByteArray(Charsets.UTF_8)
         val queued = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             gatt?.writeCharacteristic(characteristic, payload, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT) == BluetoothStatusCodes.SUCCESS
         } else {

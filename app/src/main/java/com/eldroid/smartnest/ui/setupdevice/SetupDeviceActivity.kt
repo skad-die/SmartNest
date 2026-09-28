@@ -90,14 +90,13 @@ class SetupDeviceActivity : AppCompatActivity(), SetupDeviceContract.View {
         layoutPasswordEntry = findViewById(R.id.layoutPasswordEntry)
         btnBackToNetworks = findViewById(R.id.btnBackToNetworks)
 
-        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { view: android.view.View, insets: WindowInsetsCompat ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             val params = view.layoutParams as android.view.ViewGroup.MarginLayoutParams
             params.topMargin = systemBars.top
             view.layoutParams = params
             insets
         }
-
         layoutEmptyNetworks = findViewById(R.id.layoutEmptyNetworks)
         rvNetworks = findViewById(R.id.rvNetworks)
         btnRetryFromEmptyState = findViewById(R.id.btnRetryFromEmptyState)
@@ -108,7 +107,10 @@ class SetupDeviceActivity : AppCompatActivity(), SetupDeviceContract.View {
 
         btnRetryFromEmptyState.setOnClickListener { presenter.onRescanNetworksClicked() }
 
-        connectedDeviceAdapter = ConnectedDeviceAdapter { device -> presenter.onChangeWifiClicked(device) }
+        connectedDeviceAdapter = ConnectedDeviceAdapter(
+            onChangeWifiClicked = { device -> presenter.onChangeWifiClicked(device) },
+            onUnpairClicked = { device -> presenter.onUnpairClicked(device) }
+        )
         rvConnectedDevices.layoutManager = LinearLayoutManager(this)
         rvConnectedDevices.adapter = connectedDeviceAdapter
 

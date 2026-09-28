@@ -114,7 +114,9 @@
     <string name="command_sent_on">You requested: ON</string>
     <string name="command_sent_off">You requested: OFF</string>
     <string name="last_updated_short">Updated %s</string>
-
-
+    <string name="no_device_paired">No device paired yet</string>
+    <string name="unpair_title">Unpair Device</string>
+    <string name="unpair_message">Are you sure you want to unpair %s? This will remove it from your account.</string>
+    <string name="unpair">Unpair</string>
 
 </resources>

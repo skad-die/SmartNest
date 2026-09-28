@@ -2,18 +2,19 @@ package com.eldroid.smartnest.ui.dashboard
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
+import com.eldroid.smartnest.R
 import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.eldroid.smartnest.R
 import com.eldroid.smartnest.data.model.SensorReading
-import com.eldroid.smartnest.ui.ledcontrol.LedControlActivity
 import com.eldroid.smartnest.ui.login.LoginActivity
 import com.eldroid.smartnest.ui.settings.SettingsActivity
 import com.eldroid.smartnest.ui.setupdevice.SetupDeviceActivity
@@ -43,6 +44,15 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         enableEdgeToEdge()
         setContentView(R.layout.activity_dashboard)
 
+        bindViews()
+        setupInsets()
+        setupDrawerAndToolbar()
+        setupBackPressHandler()
+
+        presenter.attachView(this)
+    }
+
+    private fun bindViews() {
         drawerLayout = findViewById(R.id.drawerLayout)
         navView = findViewById(R.id.navView)
         toolbar = findViewById(R.id.toolbar)
@@ -52,13 +62,19 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         tvTrayStatus = findViewById(R.id.tvTrayStatus)
         tvDeviceStatus = findViewById(R.id.tvDeviceStatus)
         tvLastUpdated = findViewById(R.id.tvLastUpdated)
-        tvDrawerUserEmail = navView.getHeaderView(0).findViewById(R.id.tvDrawerUserEmail)
-        tvDrawerUserName = navView.getHeaderView(0).findViewById(R.id.tvDrawerUserName)
-        val drawerProfileCard = navView.getHeaderView(0).findViewById<android.view.View>(R.id.drawerProfileCard)
+
+        val headerView = navView.getHeaderView(0)
+        tvDrawerUserEmail = headerView.findViewById(R.id.tvDrawerUserEmail)
+        tvDrawerUserName = headerView.findViewById(R.id.tvDrawerUserName)
+    }
+
+    private fun setupInsets() {
+        val drawerProfileCard = navView.getHeaderView(0).findViewById<View>(R.id.drawerProfileCard)
         val basePaddingLeft = drawerProfileCard.paddingLeft
         val basePaddingTop = drawerProfileCard.paddingTop
         val basePaddingRight = drawerProfileCard.paddingRight
         val basePaddingBottom = drawerProfileCard.paddingBottom
+
         ViewCompat.setOnApplyWindowInsetsListener(drawerProfileCard) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.setPadding(basePaddingLeft, basePaddingTop + systemBars.top, basePaddingRight, basePaddingBottom)
@@ -72,20 +88,20 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             view.layoutParams = params
             insets
         }
+    }
 
-        presenter.attachView(this)
-        presenter.onDrawerOpened()
-
+    private fun setupDrawerAndToolbar() {
         toolbar.setNavigationOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
         }
 
         drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
-            override fun onDrawerOpened(drawerView: android.view.View) {
+            override fun onDrawerOpened(drawerView: View) {
                 presenter.onDrawerOpened()
             }
         })
 
+        val drawerProfileCard = navView.getHeaderView(0).findViewById<View>(R.id.drawerProfileCard)
         drawerProfileCard.setOnClickListener {
             Toast.makeText(this, "User profile coming soon", Toast.LENGTH_SHORT).show()
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -95,9 +111,6 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             when (item.itemId) {
                 R.id.nav_setup_device -> {
                     startActivity(Intent(this, SetupDeviceActivity::class.java))
-                }
-                R.id.nav_led_control -> {
-                    startActivity(Intent(this, LedControlActivity::class.java))
                 }
                 R.id.nav_settings -> {
                     startActivity(Intent(this, SettingsActivity::class.java))
@@ -109,8 +122,19 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
+    }
 
-
+    private fun setupBackPressHandler() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
     }
 
     override fun onStart() {
@@ -128,20 +152,11 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         super.onDestroy()
     }
 
-    override fun onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
-
     override fun showSensorReading(reading: SensorReading) {
         tvTemperature.text = getString(R.string.temperature_value, reading.temperatureCelsius)
         tvHumidity.text = getString(R.string.humidity_value, reading.humidityPercent)
         tvAirQuality.text = getString(R.string.air_quality_value, reading.airQualityPpm)
         tvTrayStatus.text = reading.trayStatus
-        tvDeviceStatus.text = getString(R.string.device_online)
 
         val formatter = SimpleDateFormat("MMM d, h:mm a", Locale.getDefault())
         tvLastUpdated.text = getString(
@@ -150,16 +165,25 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         )
     }
 
+    override fun showDeviceOnline() {
+        tvDeviceStatus.text = getString(R.string.device_online)
+    }
+
     override fun showDeviceOffline() {
         tvDeviceStatus.text = getString(R.string.device_offline)
-        tvTemperature.text = getString(R.string.placeholder_dash)
-        tvHumidity.text = getString(R.string.placeholder_dash)
-        tvAirQuality.text = getString(R.string.placeholder_dash)
-        tvTrayStatus.text = getString(R.string.placeholder_dash)
+    }
+
+    override fun showNoDevicePaired() {
+        tvDeviceStatus.text = getString(R.string.no_device_paired)
+        resetSensorDataToPlaceholders()
     }
 
     override fun showLoadError(message: String) {
         tvDeviceStatus.text = message
+        resetSensorDataToPlaceholders()
+    }
+
+    private fun resetSensorDataToPlaceholders() {
         tvTemperature.text = getString(R.string.placeholder_dash)
         tvHumidity.text = getString(R.string.placeholder_dash)
         tvAirQuality.text = getString(R.string.placeholder_dash)
@@ -175,8 +199,9 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
     }
 
     override fun navigateToLogin() {
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        val intent = Intent(this, LoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
         startActivity(intent)
         finish()
     }
