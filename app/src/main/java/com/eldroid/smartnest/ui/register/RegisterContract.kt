@@ -3,13 +3,17 @@ package com.eldroid.smartnest.ui.register
 interface RegisterContract {
 
     interface View {
-        fun showError(message: String)
-        fun clearError()
+        fun showNameError(message: String?)
+        fun showEmailError(message: String?)
+        fun showPasswordError(message: String?)
+        fun showConfirmPasswordError(message: String?)
+        fun clearAllErrors()
+
         fun showLoading()
         fun hideLoading()
         fun navigateToLoginAfterCancel()
         fun navigateToLoginAfterSuccess()
-        fun showRegistrationError(message: String)
+        fun showGeneralError(message: String)
         fun showRegistrationSuccess()
     }
 

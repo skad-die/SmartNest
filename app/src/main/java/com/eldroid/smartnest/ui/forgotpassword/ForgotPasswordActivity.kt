@@ -4,18 +4,20 @@ import android.os.Bundle
 import android.view.View as AndroidView
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.eldroid.smartnest.R
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 class ForgotPasswordActivity : AppCompatActivity(), ForgotPasswordContract.View {
 
     private val presenter: ForgotPasswordContract.Presenter = ForgotPasswordPresenter()
 
-    private lateinit var etEmail: EditText
+    private lateinit var tilEmail: TextInputLayout
+    private lateinit var etEmail: TextInputEditText
     private lateinit var btnSendReset: Button
     private lateinit var btnBackToLogin: Button
     private lateinit var tvForgotPasswordError: TextView
@@ -26,6 +28,7 @@ class ForgotPasswordActivity : AppCompatActivity(), ForgotPasswordContract.View 
         enableEdgeToEdge()
         setContentView(R.layout.activity_forgot_password)
 
+        tilEmail = findViewById(R.id.tilEmail)
         etEmail = findViewById(R.id.etEmail)
         btnSendReset = findViewById(R.id.btnSendReset)
         btnBackToLogin = findViewById(R.id.btnBackToLogin)
@@ -49,13 +52,20 @@ class ForgotPasswordActivity : AppCompatActivity(), ForgotPasswordContract.View 
         super.onDestroy()
     }
 
-    override fun showError(message: String) {
-        tvForgotPasswordError.text = message
-        tvForgotPasswordError.setTextColor(0xFFD32F2F.toInt())
+    override fun showEmailError(message: String?) {
+        tilEmail.error = message
     }
 
-    override fun clearError() {
+    override fun clearAllErrors() {
+        tilEmail.error = null
         tvForgotPasswordError.text = ""
+        tvForgotPasswordError.visibility = AndroidView.GONE
+    }
+
+    override fun showGeneralError(message: String) {
+        tvForgotPasswordError.setTextColor(0xFFD32F2F.toInt())
+        tvForgotPasswordError.text = message
+        tvForgotPasswordError.visibility = AndroidView.VISIBLE
     }
 
     override fun showLoading() {
@@ -71,6 +81,7 @@ class ForgotPasswordActivity : AppCompatActivity(), ForgotPasswordContract.View 
     override fun showRequestSentMessage() {
         tvForgotPasswordError.setTextColor(0xFF2E7D32.toInt())
         tvForgotPasswordError.text = getString(R.string.reset_link_sent_message)
+        tvForgotPasswordError.visibility = AndroidView.VISIBLE
         btnSendReset.isEnabled = false
     }
 

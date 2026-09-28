@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="smartnest_primary">#F2A73D</color>
-    <color name="smartnest_primary_dark">#C4841F</color>
-    <color name="smartnest_on_primary">#2B1D00</color>
-    <color name="smartnest_secondary">#3F8E86</color>
-    <color name="smartnest_on_secondary">#FFFFFF</color>
-    <color name="smartnest_tertiary">#8A5A34</color>
+    <color name="smartnest_primary">#a6e3a1</color>
+    <color name="smartnest_primary_dark">#72af6d</color>
+    <color name="smartnest_on_primary">#11111b</color>
+    <color name="smartnest_secondary">#94e2d5</color>
+    <color name="smartnest_on_secondary">#11111b</color>
+    <color name="smartnest_tertiary">#fab387</color>
+    <color name="smartnest_background">#1e1e2e</color>
+    <color name="smartnest_surface">#313244</color>
+    <color name="smartnest_on_surface">#cdd6f4</color>
+    <color name="smartnest_placeholder">#bac2de</color>
+    <color name="smartnest_outline">#7f849c</color>
 </resources>

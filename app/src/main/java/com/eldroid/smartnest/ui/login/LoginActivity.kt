@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View as AndroidView
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -14,13 +13,18 @@ import com.eldroid.smartnest.R
 import com.eldroid.smartnest.ui.dashboard.DashboardActivity
 import com.eldroid.smartnest.ui.forgotpassword.ForgotPasswordActivity
 import com.eldroid.smartnest.ui.register.RegisterActivity
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 class LoginActivity : AppCompatActivity(), LoginContract.View {
 
     private val presenter: LoginContract.Presenter = LoginPresenter()
 
-    private lateinit var etEmail: EditText
-    private lateinit var etPassword: EditText
+    private lateinit var tilEmail: TextInputLayout
+    private lateinit var tilPassword: TextInputLayout
+    private lateinit var etEmail: TextInputEditText
+    private lateinit var etPassword: TextInputEditText
+
     private lateinit var btnLogin: Button
     private lateinit var btnGoToRegister: Button
     private lateinit var tvForgotPassword: TextView
@@ -32,8 +36,11 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
 
+        tilEmail = findViewById(R.id.tilEmail)
+        tilPassword = findViewById(R.id.tilPassword)
         etEmail = findViewById(R.id.etEmail)
         etPassword = findViewById(R.id.etPassword)
+
         btnLogin = findViewById(R.id.btnLogin)
         btnGoToRegister = findViewById(R.id.btnGoToRegister)
         tvForgotPassword = findViewById(R.id.tvForgotPassword)
@@ -69,12 +76,24 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
         super.onDestroy()
     }
 
-    override fun showError(message: String) {
-        tvLoginError.text = message
+    override fun showEmailError(message: String?) {
+        tilEmail.error = message
     }
 
-    override fun clearError() {
+    override fun showPasswordError(message: String?) {
+        tilPassword.error = message
+    }
+
+    override fun clearAllErrors() {
+        tilEmail.error = null
+        tilPassword.error = null
         tvLoginError.text = ""
+        tvLoginError.visibility = AndroidView.GONE
+    }
+
+    override fun showGeneralError(message: String) {
+        tvLoginError.text = message
+        tvLoginError.visibility = AndroidView.VISIBLE
     }
 
     override fun showLoading() {
@@ -100,10 +119,6 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
 
     override fun navigateToForgotPassword() {
         startActivity(Intent(this, ForgotPasswordActivity::class.java))
-    }
-
-    override fun showAuthError(message: String) {
-        tvLoginError.text = message
     }
 
     private fun hideKeyboard() {

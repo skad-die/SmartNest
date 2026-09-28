@@ -9,7 +9,6 @@
     <string name="email">Email Address</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
-    <string name="full_name">Full Name</string>
     <string name="logout">Logout</string>
     <string name="all_fields_required">Please fill out all fields.</string>
     <string name="invalid_email_format">Please enter a valid email address.</string>
@@ -27,6 +26,12 @@
     <string name="create_account">Create Account</string>
     <string name="sign_up">Sign Up</string>
     <string name="existing_account_message">Already have an account? Log In</string>
+    <string name="register_subtitle">Please fill in your details to create an account.</string>
+    <string name="rule_min_chars">• Minimum 8 characters</string>
+    <string name="rule_letter_number">• Include at least one letter and one number</string>
+    <string name="rule_no_spaces">• No spaces allowed</string>
+    <string name="username">Username</string>
+    <string name="confirm_password_hint">Confirm Password</string>
 
     <!-- Forgot Password -->
     <string name="forgot_password_title">Reset Password</string>

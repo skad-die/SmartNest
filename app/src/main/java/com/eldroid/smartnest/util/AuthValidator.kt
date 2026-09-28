@@ -15,14 +15,14 @@ object AuthValidator {
 
     fun validateName(name: String): ValidationResult {
         if (name.isBlank()) {
-            return ValidationResult.Invalid("Name is required")
+            return ValidationResult.Invalid("Username is required")
         }
         if (name.length < MIN_NAME_LENGTH) {
-            return ValidationResult.Invalid("Name must be at least $MIN_NAME_LENGTH characters")
+            return ValidationResult.Invalid("Username must be at least $MIN_NAME_LENGTH characters")
         }
         val hasOnlyAllowedChars = name.all { it.isLetter() || it in ALLOWED_NAME_EXTRA_CHARS }
         if (!hasOnlyAllowedChars) {
-            return ValidationResult.Invalid("Name can only contain letters, spaces, and - ' .")
+            return ValidationResult.Invalid("Username can only contain letters, spaces, and - ' .")
         }
         return ValidationResult.Valid
     }

@@ -1,12 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.SmartNest" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
+    <!-- Base application theme locked to Catppuccin Mocha Dark Mode -->
+    <style name="Base.Theme.SmartNest" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/smartnest_primary</item>
         <item name="colorOnPrimary">@color/smartnest_on_primary</item>
         <item name="colorSecondary">@color/smartnest_secondary</item>
         <item name="colorOnSecondary">@color/smartnest_on_secondary</item>
         <item name="colorTertiary">@color/smartnest_tertiary</item>
+
+        <!-- Backgrounds & Surfaces -->
+        <item name="android:colorBackground">@color/smartnest_background</item>
+        <item name="colorOnBackground">@color/smartnest_on_surface</item>
+        <item name="colorSurface">@color/smartnest_surface</item>
+        <item name="colorOnSurface">@color/smartnest_on_surface</item>
+        <item name="colorOutline">@color/smartnest_outline</item>
     </style>
 
     <style name="Theme.SmartNest" parent="Base.Theme.SmartNest" />

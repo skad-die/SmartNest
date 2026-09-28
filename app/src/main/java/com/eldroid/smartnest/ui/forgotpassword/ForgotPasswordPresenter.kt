@@ -21,13 +21,13 @@ class ForgotPasswordPresenter(
     }
 
     override fun onSendResetClicked(email: String) {
-        view?.clearError()
+        view?.clearAllErrors()
 
         val trimmedEmail = email.trim()
 
         val emailResult = AuthValidator.validateEmail(trimmedEmail)
         if (emailResult is AuthValidator.ValidationResult.Invalid) {
-            view?.showError(emailResult.message)
+            view?.showEmailError(emailResult.message)
             return
         }
 
@@ -41,15 +41,15 @@ class ForgotPasswordPresenter(
                 } else {
                     when (task.exception) {
                         is FirebaseNetworkException ->
-                            view?.showError("Network error. Check your connection and try again.")
+                            view?.showGeneralError("Network error. Check your connection and try again.")
                         is FirebaseTooManyRequestsException ->
-                            view?.showError("Too many attempts. Please wait a moment and try again.")
+                            view?.showGeneralError("Too many attempts. Please wait a moment and try again.")
                         is FirebaseAuthInvalidUserException -> {
-                            view?.showRequestSentMessage()
+                            view?.showRequestSentMessage() // Safe fallback UX practice
                         }
                         else -> {
                             val errorMsg = task.exception?.localizedMessage ?: "Failed to send reset email. Please try again."
-                            view?.showError(errorMsg)
+                            view?.showGeneralError(errorMsg)
                         }
                     }
                 }

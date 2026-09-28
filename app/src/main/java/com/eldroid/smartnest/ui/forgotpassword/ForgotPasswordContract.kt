@@ -5,8 +5,9 @@ interface ForgotPasswordContract {
     interface View {
         fun showLoading()
         fun hideLoading()
-        fun showError(message: String)
-        fun clearError()
+        fun showEmailError(message: String?)
+        fun clearAllErrors()
+        fun showGeneralError(message: String)
         fun showRequestSentMessage()
         fun navigateToLogin()
     }

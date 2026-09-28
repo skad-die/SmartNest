@@ -3,14 +3,15 @@ package com.eldroid.smartnest.ui.login
 interface LoginContract {
 
     interface View {
-        fun showError(message: String)
-        fun clearError()
+        fun showEmailError(message: String?)
+        fun showPasswordError(message: String?)
+        fun clearAllErrors()
+        fun showGeneralError(message: String)
         fun showLoading()
         fun hideLoading()
         fun navigateToDashboard()
         fun navigateToRegister()
         fun navigateToForgotPassword()
-        fun showAuthError(message: String)
     }
 
     interface Presenter {

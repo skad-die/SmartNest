@@ -27,20 +27,20 @@ class LoginPresenter(
     }
 
     override fun onLoginClicked(email: String, password: String) {
-        view?.clearError()
+        view?.clearAllErrors()
 
         val trimmedEmail = email.trim()
         val trimmedPassword = password.trim()
 
         val emailResult = AuthValidator.validateEmail(trimmedEmail)
         if (emailResult is AuthValidator.ValidationResult.Invalid) {
-            view?.showError(emailResult.message)
+            view?.showEmailError(emailResult.message)
             return
         }
 
         val passwordResult = AuthValidator.validateLoginPassword(trimmedPassword)
         if (passwordResult is AuthValidator.ValidationResult.Invalid) {
-            view?.showError(passwordResult.message)
+            view?.showPasswordError(passwordResult.message)
             return
         }
 
@@ -58,7 +58,7 @@ class LoginPresenter(
                         is FirebaseNetworkException -> "Network error. Check your connection and try again."
                         else -> "Unable to log in right now. Please try again."
                     }
-                    view?.showAuthError(message)
+                    view?.showGeneralError(message)
                 }
             }
     }

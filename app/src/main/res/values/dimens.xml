@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing & Padding -->
+
+    <dimen name="screen_padding">24dp</dimen>
+    <dimen name="element_spacing_medium">12dp</dimen>
+    <dimen name="element_spacing_small">6dp</dimen>
+    <dimen name="element_spacing_large">20dp</dimen>
+
+    <!-- Corner Radii -->
+    <dimen name="field_corner_radius">0dp</dimen>
+
+    <!-- Typography Scale -->
+    <dimen name="text_size_brand">28sp</dimen>
+    <dimen name="text_size_title">22sp</dimen>
+    <dimen name="text_size_subtitle">14sp</dimen>
+    <dimen name="text_size_body">16sp</dimen>
+    <dimen name="text_size_helper">12sp</dimen>
+    <dimen name="text_size_button">14sp</dimen>
+</resources>

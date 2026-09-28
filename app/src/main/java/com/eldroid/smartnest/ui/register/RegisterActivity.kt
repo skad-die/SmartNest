@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View as AndroidView
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -13,15 +12,23 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.eldroid.smartnest.R
 import com.eldroid.smartnest.ui.login.LoginActivity
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 class RegisterActivity : AppCompatActivity(), RegisterContract.View {
 
     private val presenter: RegisterContract.Presenter = RegisterPresenter()
 
-    private lateinit var etName: EditText
-    private lateinit var etEmail: EditText
-    private lateinit var etPassword: EditText
-    private lateinit var etConfirmPassword: EditText
+    private lateinit var tilName: TextInputLayout
+    private lateinit var tilEmail: TextInputLayout
+    private lateinit var tilPassword: TextInputLayout
+    private lateinit var tilConfirmPassword: TextInputLayout
+
+    private lateinit var etName: TextInputEditText
+    private lateinit var etEmail: TextInputEditText
+    private lateinit var etPassword: TextInputEditText
+    private lateinit var etConfirmPassword: TextInputEditText
+
     private lateinit var btnRegister: Button
     private lateinit var btnGoToLogin: Button
     private lateinit var tvRegisterError: TextView
@@ -32,10 +39,18 @@ class RegisterActivity : AppCompatActivity(), RegisterContract.View {
         enableEdgeToEdge()
         setContentView(R.layout.activity_register)
 
+        // Bind TextInputLayouts
+        tilName = findViewById(R.id.tilName)
+        tilEmail = findViewById(R.id.tilEmail)
+        tilPassword = findViewById(R.id.tilPassword)
+        tilConfirmPassword = findViewById(R.id.tilConfirmPassword)
+
+        // Bind EditTexts
         etName = findViewById(R.id.etName)
         etEmail = findViewById(R.id.etEmail)
         etPassword = findViewById(R.id.etPassword)
         etConfirmPassword = findViewById(R.id.etConfirmPassword)
+
         btnRegister = findViewById(R.id.btnRegister)
         btnGoToLogin = findViewById(R.id.btnGoToLogin)
         tvRegisterError = findViewById(R.id.tvRegisterError)
@@ -63,12 +78,34 @@ class RegisterActivity : AppCompatActivity(), RegisterContract.View {
         super.onDestroy()
     }
 
-    override fun showError(message: String) {
-        tvRegisterError.text = message
+    override fun showNameError(message: String?) {
+        tilName.error = message
     }
 
-    override fun clearError() {
+    override fun showEmailError(message: String?) {
+        tilEmail.error = message
+    }
+
+    override fun showPasswordError(message: String?) {
+        tilPassword.error = message
+    }
+
+    override fun showConfirmPasswordError(message: String?) {
+        tilConfirmPassword.error = message
+    }
+
+    override fun clearAllErrors() {
+        tilName.error = null
+        tilEmail.error = null
+        tilPassword.error = null
+        tilConfirmPassword.error = null
         tvRegisterError.text = ""
+        tvRegisterError.visibility = AndroidView.GONE
+    }
+
+    override fun showGeneralError(message: String) {
+        tvRegisterError.text = message
+        tvRegisterError.visibility = AndroidView.VISIBLE
     }
 
     override fun showLoading() {
@@ -90,10 +127,6 @@ class RegisterActivity : AppCompatActivity(), RegisterContract.View {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
-    }
-
-    override fun showRegistrationError(message: String) {
-        tvRegisterError.text = message
     }
 
     override fun showRegistrationSuccess() {

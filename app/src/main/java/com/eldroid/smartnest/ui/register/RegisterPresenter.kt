@@ -27,7 +27,7 @@ class RegisterPresenter(
         password: String,
         confirmPassword: String
     ) {
-        view?.clearError()
+        view?.clearAllErrors()
 
         val trimmedName = name.trim()
         val trimmedEmail = email.trim()
@@ -36,25 +36,25 @@ class RegisterPresenter(
 
         val nameResult = AuthValidator.validateName(trimmedName)
         if (nameResult is AuthValidator.ValidationResult.Invalid) {
-            view?.showError(nameResult.message)
+            view?.showNameError(nameResult.message)
             return
         }
 
         val emailResult = AuthValidator.validateEmail(trimmedEmail)
         if (emailResult is AuthValidator.ValidationResult.Invalid) {
-            view?.showError(emailResult.message)
+            view?.showEmailError(emailResult.message)
             return
         }
 
         val passwordResult = AuthValidator.validatePasswordComplexity(trimmedPassword)
         if (passwordResult is AuthValidator.ValidationResult.Invalid) {
-            view?.showError(passwordResult.message)
+            view?.showPasswordError(passwordResult.message)
             return
         }
 
         val matchResult = AuthValidator.validatePasswordMatch(trimmedPassword, trimmedConfirm)
         if (matchResult is AuthValidator.ValidationResult.Invalid) {
-            view?.showError(matchResult.message)
+            view?.showConfirmPasswordError(matchResult.message)
             return
         }
 
@@ -80,7 +80,7 @@ class RegisterPresenter(
                         is FirebaseNetworkException -> "Network error. Check your connection and try again."
                         else -> "Unable to create account right now. Please try again."
                     }
-                    view?.showRegistrationError(message)
+                    view?.showGeneralError(message)
                 }
             }
     }
