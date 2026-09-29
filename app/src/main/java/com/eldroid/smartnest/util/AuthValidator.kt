@@ -44,9 +44,15 @@ object AuthValidator {
         if (password.length < MIN_PASSWORD_LENGTH) {
             return ValidationResult.Invalid("Password must be at least $MIN_PASSWORD_LENGTH characters")
         }
-        if (!password.any { it.isLetter() } || !password.any { it.isDigit() }) {
-            return ValidationResult.Invalid("Password must include at least one letter and one number")
+
+        val hasUppercase = password.any { it.isUpperCase() }
+        val hasDigit = password.any { it.isDigit() }
+        val hasSpecialChar = password.any { !it.isLetterOrDigit() }
+
+        if (!hasUppercase || !hasDigit || !hasSpecialChar) {
+            return ValidationResult.Invalid("Password must include one uppercase letter (A-Z), one number, and one special character")
         }
+
         return ValidationResult.Valid
     }
 

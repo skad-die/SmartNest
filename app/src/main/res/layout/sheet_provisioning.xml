@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollViewProvisioning"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:id="@+id/bottomSheetContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:paddingTop="@dimen/element_spacing_medium"
+        android:paddingBottom="@dimen/screen_padding">
+
+        <!-- Bottom Sheet Drag Handle -->
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
+
+        <!-- Header Title matching Dashboard tvHeader style -->
+        <TextView
+            android:id="@+id/tvSheetTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/setup_device_title"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_size_title" />
+
+        <!-- Vertical Container for Steps -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/element_spacing_medium"
+            android:orientation="vertical">
+
+            <!-- ========================================================= -->
+            <!-- STEP 1: CONNECTING TO DEVICE STATE CARD                   -->
+            <!-- ========================================================= -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardDeviceConnection"
+                style="@style/Widget.Material3.CardView.Filled"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/element_spacing_small"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+                app:cardCornerRadius="@dimen/field_corner_radius"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/element_spacing_medium">
+
+                    <!-- Searching / Scanning Status View -->
+                    <LinearLayout
+                        android:id="@+id/layoutSearchingStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.progressindicator.CircularProgressIndicator
+                            android:id="@+id/progressScanning"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="@dimen/element_spacing_medium"
+                            android:indeterminate="true"
+                            app:indicatorColor="?attr/colorPrimary"
+                            app:indicatorSize="24dp"
+                            app:trackThickness="3dp" />
+
+                        <TextView
+                            android:id="@+id/tvSearchingStatus"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="sans-serif"
+                            android:text="@string/searching_for_device"
+                            android:textColor="?attr/colorOutline"
+                            android:textSize="@dimen/text_size_body" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnRetryDeviceSearch"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:paddingHorizontal="@dimen/element_spacing_small"
+                            android:text="@string/rescan"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="@dimen/text_size_helper"
+                            android:visibility="gone" />
+
+                    </LinearLayout>
+
+                    <!-- Connected Device Details View -->
+                    <LinearLayout
+                        android:id="@+id/layoutConnectedDevice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <ImageView
+                            android:id="@+id/ivDeviceConnectedIcon"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginEnd="@dimen/element_spacing_medium"
+                            android:background="@drawable/bg_status_dot_connected"
+                            android:contentDescription="@string/connected_smart_nest_device"
+                            android:padding="@dimen/element_spacing_small"
+                            android:src="@android:drawable/stat_sys_data_bluetooth"
+                            app:tint="?attr/colorSurfaceInverse" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvDeviceConnectedTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="@string/smart_nest_hubs"
+                                android:textColor="?attr/colorOnSurface"
+                                android:textSize="@dimen/text_size_body" />
+
+                            <LinearLayout
+                                android:id="@+id/layoutDeviceConnectedBadge"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <View
+                                    android:layout_width="8dp"
+                                    android:layout_height="8dp"
+                                    android:layout_marginEnd="6dp"
+                                    android:background="@drawable/bg_status_dot_connected" />
+
+                                <TextView
+                                    android:id="@+id/tvDeviceStatusText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="sans-serif"
+                                    android:text="@string/connected"
+                                    android:textColor="?attr/colorPrimary"
+                                    android:textSize="@dimen/text_size_helper" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnChangeDevice"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:paddingHorizontal="@dimen/element_spacing_small"
+                            android:text="@string/rescan"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="@dimen/text_size_helper" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ========================================================= -->
+            <!-- STEP 2: SCANNING & SELECTING WI-FI NETWORKS CARD          -->
+            <!-- ========================================================= -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardNetworkSelection"
+                style="@style/Widget.Material3.CardView.Filled"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/element_spacing_small"
+                android:visibility="gone"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+                app:cardCornerRadius="@dimen/field_corner_radius"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/element_spacing_medium">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/element_spacing_small"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <!-- Section Title styled like 'My Devices' in Dashboard -->
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/select_target_wifi"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="@dimen/text_size_subtitle" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnRescanNetworks"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minWidth="0dp"
+                            android:paddingHorizontal="@dimen/element_spacing_small"
+                            android:text="@string/rescan"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="@dimen/text_size_button" />
+
+                    </LinearLayout>
+
+                    <!-- Loading State -->
+                    <LinearLayout
+                        android:id="@+id/layoutWifiScanningProgress"
+                        android:layout_width="match_parent"
+                        android:layout_height="140dp"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <com.google.android.material.progressindicator.CircularProgressIndicator
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:indeterminate="true"
+                            app:indicatorColor="?attr/colorPrimary"
+                            app:indicatorSize="32dp"
+                            app:trackThickness="3dp" />
+
+                        <TextView
+                            android:id="@+id/tvWifiScanStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/element_spacing_medium"
+                            android:fontFamily="sans-serif"
+                            android:text="@string/scanning_local_networks"
+                            android:textColor="?attr/colorOutline"
+                            android:textSize="@dimen/text_size_body" />
+
+                    </LinearLayout>
+
+                    <!-- Empty Network List State -->
+                    <LinearLayout
+                        android:id="@+id/layoutEmptyNetworks"
+                        android:layout_width="match_parent"
+                        android:layout_height="140dp"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:gravity="center"
+                            android:text="@string/scanning_local_networks"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="@dimen/text_size_title" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnRetryFromEmptyState"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="@dimen/element_spacing_large"
+                            android:backgroundTint="?attr/colorPrimary"
+                            android:text="@string/rescan"
+                            android:textColor="?attr/colorOnPrimary"
+                            android:textSize="@dimen/text_size_button"
+                            app:cornerRadius="@dimen/field_corner_radius" />
+
+                    </LinearLayout>
+
+                    <!-- Wi-Fi Networks List -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvNetworks"
+                        android:layout_width="match_parent"
+                        android:layout_height="160dp"
+                        android:clipToPadding="false"
+                        android:overScrollMode="never"
+                        android:visibility="gone"
+                        tools:listitem="@layout/item_wifi_network" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ========================================================= -->
+            <!-- STEP 3: PASSWORD ENTRY & PROVISIONING CARD                -->
+            <!-- ========================================================= -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardPasswordEntry"
+                style="@style/Widget.Material3.CardView.Filled"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/element_spacing_small"
+                android:visibility="gone"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+                app:cardCornerRadius="@dimen/field_corner_radius"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/element_spacing_medium">
+
+                    <!-- Selected SSID Input -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilSsid"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/element_spacing_medium"
+                        android:enabled="false"
+                        android:hint="@string/target_network"
+                        app:boxCornerRadiusBottomEnd="@dimen/field_corner_radius"
+                        app:boxCornerRadiusBottomStart="@dimen/field_corner_radius"
+                        app:boxCornerRadiusTopEnd="@dimen/field_corner_radius"
+                        app:boxCornerRadiusTopStart="@dimen/field_corner_radius">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etSsid"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="@dimen/text_size_body" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Wi-Fi Password Input -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilWifiPassword"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/password_field_hint"
+                        app:boxCornerRadiusBottomEnd="@dimen/field_corner_radius"
+                        app:boxCornerRadiusBottomStart="@dimen/field_corner_radius"
+                        app:boxCornerRadiusTopEnd="@dimen/field_corner_radius"
+                        app:boxCornerRadiusTopStart="@dimen/field_corner_radius"
+                        app:endIconMode="password_toggle">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etWifiPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPassword"
+                            android:maxLines="1"
+                            android:textColor="?attr/colorOnSurface"
+                            android:textSize="@dimen/text_size_body" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:id="@+id/tvConfigureError"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/element_spacing_small"
+                        android:textColor="?attr/colorError"
+                        android:textSize="@dimen/text_size_helper"
+                        android:visibility="gone"
+                        tools:text="Failed to connect. Please check password."
+                        tools:visibility="visible" />
+
+                    <!-- Action Buttons -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/element_spacing_large"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnBackToNetworks"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_marginEnd="@dimen/element_spacing_small"
+                            android:layout_weight="1"
+                            android:text="@string/back_button_text"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="@dimen/text_size_button"
+                            app:cornerRadius="@dimen/field_corner_radius"
+                            app:strokeColor="?attr/colorPrimary" />
+
+                        <!-- FrameLayout overlay hosting button and inline connecting spinner -->
+                        <FrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="@dimen/element_spacing_small"
+                            android:layout_weight="1">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnConnect"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:backgroundTint="?attr/colorPrimary"
+                                android:text="@string/update_wifi_button"
+                                android:textColor="?attr/colorOnPrimary"
+                                android:textSize="@dimen/text_size_button"
+                                app:cornerRadius="@dimen/field_corner_radius" />
+
+                            <com.google.android.material.progressindicator.CircularProgressIndicator
+                                android:id="@+id/progressConnecting"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:indeterminate="true"
+                                android:visibility="gone"
+                                app:indicatorColor="?attr/colorOnPrimary"
+                                app:indicatorSize="24dp"
+                                app:trackThickness="3dp"
+                                tools:visibility="visible" />
+
+                        </FrameLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

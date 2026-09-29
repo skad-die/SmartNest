@@ -4,12 +4,14 @@
     <!-- App -->
     <string name="app_name">SmartNest</string>
     <string name="placeholder_dash">\u2014</string>
+    <string name="logout">Logout</string>
 
-    <!-- Shared: fields, actions, validation -->
+    <!-- Fields & Validation -->
     <string name="email">Email Address</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
-    <string name="logout">Logout</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="username">Username</string>
     <string name="all_fields_required">Please fill out all fields.</string>
     <string name="invalid_email_format">Please enter a valid email address.</string>
     <string name="pass_len_condition">Password must be at least 6 characters long</string>
@@ -27,11 +29,10 @@
     <string name="sign_up">Sign Up</string>
     <string name="existing_account_message">Already have an account? Log In</string>
     <string name="register_subtitle">Please fill in your details to create an account.</string>
-    <string name="rule_min_chars">• Minimum 8 characters</string>
-    <string name="rule_letter_number">• Include at least one letter and one number</string>
-    <string name="rule_no_spaces">• No spaces allowed</string>
-    <string name="username">Username</string>
-    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="rule_min_chars">• At least 8 characters long</string>
+    <string name="rule_uppercase">• One uppercase letter (A–Z)</string>
+    <string name="rule_number">• One number (0–9)</string>
+    <string name="rule_special">• One special character (e.g., !@#$%)</string>
 
     <!-- Forgot Password -->
     <string name="forgot_password_title">Reset Password</string>
@@ -40,8 +41,15 @@
     <string name="back_to_login">Back to Log In</string>
     <string name="reset_link_sent_message">If an account exists with this email, a reset link has been sent.</string>
 
+    <!-- Navigation -->
+    <string name="nav_setup_device">Setup Device</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_logout">Logout</string>
+
     <!-- Dashboard -->
     <string name="dashboard_title">Cage Overview</string>
+    <string name="cage_overview">Cage Overview</string>
+    <string name="my_devices">My devices</string>
     <string name="device_offline">Device Offline</string>
     <string name="device_online">Device Online</string>
     <string name="temperature_label">Temperature</string>
@@ -52,54 +60,43 @@
     <string name="air_quality_value">%.1f ppm</string>
     <string name="tray_status_label">Tray Status</string>
     <string name="last_updated">Last updated: %s</string>
+    <string name="last_updated_short">Updated %s</string>
+    <string name="dashboard_empty_title">No SmartNest devices yet</string>
+    <string name="dashboard_empty_subtitle">Tap the + button to find and set up your first device.</string>
+    <string name="no_devices_yet">No devices yet</string>
+    <string name="no_devices_yet_subtitle">Tap \"+ Add New\" to set up your first SmartNest hub</string>
 
-    <!-- Navigation drawer -->
-    <string name="nav_setup_device">Setup Device</string>
-    <string name="nav_settings">Settings</string>
-    <string name="nav_logout">Logout</string>
-
-    <!-- Setup Device & Hub Management -->
+    <!-- Setup Device -->
     <string name="setup_device_title">Device Management</string>
+    <string name="provision_sheet_title">Set up a device</string>
     <string name="smart_nest_hubs">SmartNest Hubs</string>
     <string name="hubs_subtitle">Select a paired device to update Wi-Fi settings</string>
     <string name="add_new_device">+ Add New</string>
     <string name="configured_devices">Configured Devices</string>
+    <string name="setup_device_instructions">Make sure your SmartNest device is powered on and nearby. Bluetooth will be used to find it and set up its Wi-Fi.</string>
+    <string name="searching_for_device">Searching for your SmartNest device…</string>
+    <string name="device_connected">Connected to %s</string>
+    <string name="connected">Connected</string>
+    <string name="bluetooth_permission_denied">Bluetooth permission is required to set up your device.</string>
+    <string name="connected_smart_nest_device">Connected SmartNest Device</string>
     <string name="scanning_local_networks">Scanning local networks…</string>
     <string name="select_target_wifi">Select Target Wi-Fi</string>
     <string name="enter_network_security_key">Enter network security key</string>
     <string name="target_network">Target Network</string>
     <string name="password_field_hint">Password</string>
-    <string name="back_button_text">Back</string>
-    <string name="update_wifi_button">Update Wi-Fi</string>
-    <string name="setup_device_instructions">Make sure your SmartNest device is powered on and nearby. Bluetooth will be used to find it and set up its Wi-Fi.</string>
-    <string name="searching_for_device">Searching for your SmartNest device…</string>
-    <string name="device_connected">Connected to %s</string>
-    <string name="bluetooth_permission_denied">Bluetooth permission is required to set up your device.</string>
     <string name="available_networks">Available networks</string>
     <string name="rescan">Refresh</string>
     <string name="network_name">Network Name (SSID)</string>
     <string name="network_password">Network Password</string>
     <string name="connect_device">Connect Device</string>
     <string name="secured_network">Secured network</string>
-
-    <!-- Settings -->
-    <string name="settings_title">Settings</string>
-    <string name="change_password_row_subtitle">Update the password used to log in</string>
-
-    <!-- Change Password -->
-    <string name="change_password_title">Change Password</string>
-    <string name="current_password">Current Password</string>
-    <string name="new_password">New Password</string>
-    <string name="confirm_new_password">Confirm New Password</string>
-    <string name="update_password">Update Password</string>
-
     <string name="connected_to_network">Connected to: %s</string>
-    <string name="no_devices_yet">No devices yet</string>
-    <string name="no_devices_yet_subtitle">Tap \"+ Add New\" to set up your first SmartNest hub</string>
+    <string name="change_wifi">Change Wi-Fi</string>
+    <string name="back_button_text">Back</string>
+    <string name="update_wifi_button">Update Wi-Fi</string>
     <string name="updating_wifi_credentials">Updating device Wi-Fi credentials\u2026</string>
     <string name="connection_failed_try_again">Connection failed. Try again.</string>
     <string name="wifi_updated_successfully">Wi-Fi updated successfully!</string>
-
     <string name="no_networks_found">No networks found</string>
     <string name="no_networks_found_subtitle">The device didn\'t report any nearby Wi-Fi networks. Try scanning again.</string>
     <string name="device_status_checking">Checking device status\u2026</string>
@@ -108,10 +105,18 @@
     <string name="device_status_unavailable">Device Unavailable</string>
     <string name="led_status_unknown">Unknown</string>
     <string name="actual_device_reported_status">Actual status reported by device</string>
-    <string name="last_updated_short">Updated %s</string>
     <string name="no_device_paired">No device paired yet</string>
     <string name="unpair_title">Unpair Device</string>
     <string name="unpair_message">Are you sure you want to unpair %s? This will remove it from your account.</string>
     <string name="unpair">Unpair</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="change_password_row_subtitle">Update the password used to log in</string>
+    <string name="change_password_title">Change Password</string>
+    <string name="current_password">Current Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="update_password">Update Password</string>
 
 </resources>

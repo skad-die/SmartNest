@@ -75,7 +75,6 @@ class DeviceRegistryRepository {
         val key = SmartNestDevice.keyFor(device.macAddress)
         val root = deviceRoot(uid)
 
-        // Use atomic multi-location update to execute unpair signal and deletion in a single request
         val updates = hashMapOf<String, Any?>(
             "commands/$key/unpair" to true,
             "registry/$key" to null,
@@ -130,4 +129,30 @@ class DeviceRegistryRepository {
     companion object {
         private const val HEARTBEAT_TIMEOUT_MS = 30_000L
     }
+
+    fun observeDeviceStatus(
+        key: String,
+        onChange: (state: String?, lastSeen: Long?) -> Unit
+    ): ValueEventListener? {
+        val uid = currentUid() ?: return null
+
+        val ref = deviceRoot(uid).child("status").child(SmartNestDevice.keyFor(key))
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val state = snapshot.child("state").getValue(String::class.java)
+                val lastSeen = (snapshot.child("lastSeen").value as? Number)?.toLong()
+                onChange(state, lastSeen)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                onChange(null, null)
+            }
+        }
+
+        ref.addValueEventListener(listener)
+        return listener
+    }
+
+
 }

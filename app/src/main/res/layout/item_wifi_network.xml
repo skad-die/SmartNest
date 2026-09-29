@@ -2,47 +2,51 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.Material3.CardView.Filled"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    app:cardElevation="0dp"
-    app:strokeWidth="1dp"
-    app:strokeColor="?attr/colorOutlineVariant"
-    app:cardCornerRadius="12dp"
+    android:layout_marginBottom="@dimen/element_spacing_small"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:cardCornerRadius="@dimen/field_corner_radius"
+    app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="16dp">
+        android:orientation="horizontal"
+        android:padding="@dimen/element_spacing_medium">
 
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:contentDescription="@null"
             android:src="@android:drawable/ic_menu_manage"
-            app:tint="?attr/colorPrimary"
-            android:contentDescription="@null" />
+            app:tint="?attr/colorPrimary" />
 
         <TextView
             android:id="@+id/tvSsid"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/element_spacing_medium"
             android:layout_weight="1"
-            android:layout_marginStart="16dp"
-            android:textAppearance="?attr/textAppearanceBodyLarge"
-            android:textColor="?android:attr/textColorPrimary" />
+            android:fontFamily="sans-serif-medium"
+            android:text=""
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="@dimen/text_size_body" />
 
         <ImageView
             android:id="@+id/ivLockIcon"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:src="@android:drawable/ic_lock_lock"
-            app:tint="?attr/colorOnSurfaceVariant"
             android:contentDescription="@string/secured_network"
-            android:visibility="invisible" />
+            android:src="@android:drawable/ic_lock_lock"
+            android:visibility="invisible"
+            app:tint="?attr/colorOutline"
+            tools:visibility="visible" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -1,8 +1,11 @@
 package com.eldroid.smartnest.ui.setupdevice
 
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.content.Context
+import com.eldroid.smartnest.data.model.DiscoveredDevice
 import com.eldroid.smartnest.data.model.SmartNestDevice
 import com.eldroid.smartnest.data.model.WifiNetwork
 import com.eldroid.smartnest.data.repository.DeviceRegistryRepository
@@ -98,6 +101,25 @@ class SetupDevicePresenter(
         }
     }
 
+    override fun onDeviceSelected(device: DiscoveredDevice) {
+        view?.clearError()
+        val bluetoothDevice = device.bluetoothDevice ?: run {
+            val adapter = bluetoothManager.adapter
+            if (adapter != null && BluetoothAdapter.checkBluetoothAddress(device.address)) {
+                adapter.getRemoteDevice(device.address)
+            } else {
+                null
+            }
+        }
+
+        if (bluetoothDevice == null) {
+            view?.showDeviceSearchError("Unable to connect to selected device address.")
+            return
+        }
+
+        onDeviceFound(bluetoothDevice, device.name)
+    }
+
     private fun startDeviceSearch() {
         foundDevice = null
         view?.showSearchingForDevice()
@@ -143,7 +165,6 @@ class SetupDevicePresenter(
         provisioningResolved = false
         view?.showConfiguring()
 
-        // Pass deviceMac as the 4th parameter to ensure strict synchronization with ESP32 status paths
         bleClient.sendCredentials(trimmedSsid, trimmedPassword, ownerUid, deviceMac)
     }
 
@@ -228,6 +249,7 @@ class SetupDevicePresenter(
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun saveDeviceToRegistry() {
         val mac = foundDevice?.address ?: return
         val ssid = lastSubmittedSsid ?: return

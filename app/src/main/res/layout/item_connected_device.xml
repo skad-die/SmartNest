@@ -2,63 +2,111 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.Material3.CardView.Filled"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="0dp"
-    app:cardBackgroundColor="?attr/colorSurfaceContainer"
-    app:strokeWidth="1dp"
-    app:strokeColor="?attr/colorOutlineVariant">
+    android:layout_marginBottom="@dimen/element_spacing_medium"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:cardCornerRadius="@dimen/field_corner_radius"
+    app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="16dp">
+        android:orientation="vertical"
+        android:padding="@dimen/element_spacing_medium">
 
+        <!-- Top Row: Status Indicator, Device Info, & Status Badge -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tvDeviceName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="SmartNest Hub #1"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textStyle="bold" />
+            <ImageView
+                android:id="@+id/ivStatus"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginEnd="@dimen/element_spacing_medium"
+                android:contentDescription="@null"
+                android:src="@android:drawable/presence_online" />
 
-            <TextView
-                android:id="@+id/tvDeviceSsid"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="Connected to: Home_Network_5G"
-                android:textAppearance="?attr/textAppearanceBodySmall"
-                android:textColor="?attr/colorOutline" />
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvDeviceName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="@dimen/text_size_body"
+                    tools:text="SmartNest Hub" />
+
+                <TextView
+                    android:id="@+id/tvDeviceSsid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="?attr/colorOutline"
+                    android:textSize="@dimen/text_size_helper"
+                    tools:text="Connected to: Home_Network_5G" />
+            </LinearLayout>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/tvDeviceStatusText"
+                style="@style/Widget.Material3.Chip.Suggestion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="@dimen/text_size_helper"
+                app:chipBackgroundColor="?android:attr/colorBackground"
+                app:chipCornerRadius="@dimen/field_corner_radius"
+                app:chipStrokeWidth="0dp"
+                tools:text="Online" />
         </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnChangeWifi"
-            style="?attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
+        <!-- Bottom Row: Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Change Wi-Fi"
-            android:textSize="12sp" />
+            android:layout_marginTop="@dimen/element_spacing_medium"
+            android:orientation="horizontal"
+            android:weightSum="2">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnUnpair"
-            style="?attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Unpair"
-            android:textColor="?attr/colorError"
-            android:textSize="12sp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnChangeWifi"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="@dimen/element_spacing_small"
+                android:layout_weight="1"
+                android:backgroundTint="?attr/colorPrimary"
+                android:text="@string/change_wifi"
+                android:textAllCaps="false"
+                android:textColor="?attr/colorOnPrimary"
+                android:textSize="@dimen/text_size_button_2"
+                app:cornerRadius="@dimen/field_corner_radius" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUnpair"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="@dimen/element_spacing_small"
+                android:layout_weight="1"
+                android:text="@string/unpair"
+                android:textAllCaps="false"
+                android:textColor="?attr/colorTertiary"
+                android:textSize="@dimen/text_size_button_2"
+                app:cornerRadius="@dimen/field_corner_radius"
+                app:strokeColor="?attr/colorTertiary" />
+        </LinearLayout>
 
     </LinearLayout>
-
 </com.google.android.material.card.MaterialCardView>
