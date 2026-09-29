@@ -5,159 +5,139 @@
 #include <FirebaseESP32.h>
 #include <addons/TokenHelper.h>
 
-#define LED_PIN 2
-
 WifiProvisioningBle wifiProvisioning;
 
-FirebaseData fbdo;
-FirebaseData streamFbdo;
+FirebaseData fbdo;         
+FirebaseData fbdoStream;   
 FirebaseAuth fbAuth;
 FirebaseConfig fbConfig;
 
-bool firebaseReady = false;
+bool firebaseStarted = false;   
 bool streamStarted = false;
-bool ledState = false;
+volatile bool unpairRequested = false;
+
+String statusPath;
+String unpairPath;
 
 unsigned long lastHeartbeat = 0;
-const unsigned long HEARTBEAT_INTERVAL_MS = 10000;
+bool firstHeartbeatSent = false;
+constexpr unsigned long HEARTBEAT_INTERVAL_MS = 10000;
+constexpr int DELETE_RETRIES = 3;
 
-String commandPath;
-String statusPath;
-String lastUpdatePath;
-String devicePath;
-
-void setLed(bool on) {
-  ledState = on;
-  digitalWrite(LED_PIN, on ? HIGH : LOW);
-  Serial.println(on ? "LED -> ON" : "LED -> OFF");
-}
-
-void buildPaths(const String &uid) {
-  commandPath = "/devices/" + uid + "/led/command";
-  statusPath = "/devices/" + uid + "/led/status";
-  lastUpdatePath = "/devices/" + uid + "/led/lastUpdate";
-  devicePath = "/devices/" + uid + "/deviceStatus";
-}
-
-void reportLedStatus() {
-  if (!firebaseReady) return;
-  if (!Firebase.setString(fbdo, statusPath.c_str(), ledState ? "ON" : "OFF")) {
-    Serial.println("Failed to report LED status: " + fbdo.errorReason());
-  }
-  if (!Firebase.setInt(fbdo, lastUpdatePath.c_str(), (int)(millis() / 1000))) {
-    Serial.println("Failed to report lastUpdate: " + fbdo.errorReason());
+void unpairStreamCallback(StreamData data) {
+  if (data.dataType() == "boolean" && data.boolData()) {
+    unpairRequested = true;
   }
 }
 
-void reportDeviceHeartbeat() {
-  if (!firebaseReady) return;
-  if (!Firebase.setString(fbdo, (devicePath + "/state").c_str(), "online")) {
-    Serial.println("Failed to report device heartbeat: " + fbdo.errorReason());
-  }
-  Firebase.setInt(fbdo, (devicePath + "/lastSeen").c_str(), (int)(millis() / 1000));
-}
-
-void pollLedCommand() {
-  if (!streamStarted) return;
-
-  if (!Firebase.readStream(streamFbdo)) {
-    Serial.println("Stream read error: " + streamFbdo.errorReason());
-    return;
-  }
-
-  if (streamFbdo.streamAvailable() && streamFbdo.dataType() == "string") {
-    String command = streamFbdo.stringData();
-    command.trim();
-    command.toUpperCase();
-
-    if (command == "ON") {
-      setLed(true);
-      reportLedStatus();
-    } else if (command == "OFF") {
-      setLed(false);
-      reportLedStatus();
-    } else {
-      Serial.println("Ignoring unrecognized command: '" + command + "'");
-    }
-  }
+void unpairStreamTimeoutCallback(bool timeout) {
+  if (timeout) Serial.println(F("Unpair stream timed out, resuming..."));
 }
 
 void setupFirebase() {
-  fbConfig.api_key = FIREBASE_API_KEY;
-  fbConfig.database_url = FIREBASE_DATABASE_URL;
+  String owner = wifiProvisioning.getOwnerUid();
+  String macKey = wifiProvisioning.getSavedMacAddress();
 
-  fbAuth.user.email = FIREBASE_USER_EMAIL;
-  fbAuth.user.password = FIREBASE_USER_PASSWORD;
+  if (owner.length() == 0 || macKey.length() == 0) {
+    Serial.println(F("Missing owner UID or device MAC. Skipping Firebase setup."));
+    return;
+  }
+
+  // Normalise to AA-BB-CC-DD-EE-FF to match the database paths
+  macKey.replace(":", "-");
+
+  statusPath = "/devices/" + owner + "/status/" + macKey;
+  unpairPath = "/devices/" + owner + "/commands/" + macKey + "/unpair";
+
+  fbConfig.database_url = FIREBASE_DATABASE_URL;
+  fbConfig.signer.tokens.legacy_token = FIREBASE_API_KEY;   // database secret (rotate it, keep it out of git)
 
   Firebase.begin(&fbConfig, &fbAuth);
   Firebase.reconnectWiFi(true);
 
-  Serial.println("Authenticating with Firebase...");
-  unsigned long start = millis();
-  while (fbAuth.token.uid.length() == 0 && millis() - start < 15000) {
-    Serial.print(".");
-    delay(300);
-  }
-  Serial.println();
+  firebaseStarted = true;
+  Serial.printf("Firebase initialised for device MAC: %s\n", macKey.c_str());
+}
 
-  firebaseReady = true;
+void startUnpairStream() {
+  if (streamStarted || !Firebase.ready()) return;
 
-  String uid = String(fbAuth.token.uid.c_str());
-
-  if (uid.length() == 0) {
-    Serial.println("Firebase auth timed out -- check email/password and that");
-    Serial.println("Email/Password sign-in is enabled in Firebase Console.");
+  if (!Firebase.beginStream(fbdoStream, unpairPath.c_str())) {
+    Serial.printf("Unpair stream failed: %s\n", fbdoStream.errorReason().c_str());
     return;
   }
+  Firebase.setStreamCallback(fbdoStream, unpairStreamCallback, unpairStreamTimeoutCallback);
+  streamStarted = true;
+  Serial.println(F("Unpair stream started."));
+}
 
-  Serial.println("Firebase UID: " + uid);
-  buildPaths(uid);
+void reportHeartbeat() {
+  FirebaseJson json;
+  json.set("state", "online");
+  json.set("lastSeen/.sv", "timestamp");
 
-  if (Firebase.beginStream(streamFbdo, commandPath.c_str())) {
-    streamStarted = true;
-  } else {
-    Serial.println("Could not begin command stream: " + streamFbdo.errorReason());
+  if (!Firebase.updateNode(fbdo, statusPath.c_str(), json)) {
+    Serial.printf("Heartbeat failed: %s\n", fbdo.errorReason().c_str());
+  }
+}
+
+bool deleteWithRetry(const String &path) {
+  for (int i = 0; i < DELETE_RETRIES; i++) {
+    if (Firebase.deleteNode(fbdo, path.c_str())) return true;   // deleting a missing node also succeeds
+    Serial.printf("Delete failed (%s), attempt %d/%d\n", fbdo.errorReason().c_str(), i + 1, DELETE_RETRIES);
+    delay(500);
+  }
+  return false;
+}
+
+void handleUnpair() {
+  Serial.println(F("Unpair command detected from app. Cleaning up..."));
+
+  Firebase.endStream(fbdoStream);
+  Firebase.removeStreamCallback(fbdoStream);
+  streamStarted = false;
+
+  bool cmdOk = deleteWithRetry(unpairPath);
+  bool statusOk = deleteWithRetry(statusPath);
+  if (!cmdOk || !statusOk) {
+    Serial.println(F("Cloud cleanup incomplete. Wiping locally anyway."));
   }
 
-  reportDeviceHeartbeat();
-  reportLedStatus();
+  delay(200);
+  wifiProvisioning.clearCredentialsAndReset();
 }
 
 void setup() {
   Serial.begin(115200);
   delay(500);
 
-  pinMode(LED_PIN, OUTPUT);
-  setLed(false);
-
   wifiProvisioning.begin();
-
-  if (wifiProvisioning.isConnected()) {
-    setupFirebase();
-  }
 }
 
 void loop() {
   wifiProvisioning.loop();
 
-  if (wifiProvisioning.isProvisioning()) {
-    delay(50);
+  if (wifiProvisioning.isProvisioning()) return;
+  if (!wifiProvisioning.isConnected()) return;   
+  if (!firebaseStarted) {
+    setupFirebase();
     return;
   }
 
-  if (!firebaseReady && wifiProvisioning.isConnected()) {
-    setupFirebase();
+  if (!Firebase.ready()) return;
+
+  startUnpairStream();
+
+  if (unpairRequested) {
+    unpairRequested = false;
+    handleUnpair();
+    return;
   }
 
-  if (firebaseReady && wifiProvisioning.isConnected()) {
-    pollLedCommand();
-
-    unsigned long now = millis();
-    if (now - lastHeartbeat >= HEARTBEAT_INTERVAL_MS) {
-      lastHeartbeat = now;
-      reportDeviceHeartbeat();
-    }
+  unsigned long now = millis();
+  if (!firstHeartbeatSent || now - lastHeartbeat >= HEARTBEAT_INTERVAL_MS) {
+    firstHeartbeatSent = true;
+    lastHeartbeat = now;
+    reportHeartbeat();
   }
-
-  delay(100);
 }

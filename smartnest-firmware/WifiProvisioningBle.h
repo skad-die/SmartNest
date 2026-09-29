@@ -14,23 +14,29 @@
 #define STATUS_CHAR_UUID       "6e400003-b5a3-f393-e0a9-e50e24dcca9e"
 #define SCAN_TRIGGER_CHAR_UUID "6e400004-b5a3-f393-e0a9-e50e24dcca9e"
 #define NETWORKS_CHAR_UUID     "6e400005-b5a3-f393-e0a9-e50e24dcca9e"
-#define MAX_REPORTED_NETWORKS 8
 
-#define RESET_BUTTON_PIN       0     // BOOT button 
-#define HOLD_TIME_MS           5000  
-#define STATUS_LED_PIN         2     
+constexpr int MAX_REPORTED_NETWORKS = 8;
+constexpr int RESET_BUTTON_PIN = 0;
+constexpr unsigned long HOLD_TIME_MS = 5000;
+constexpr int ONBOARD_LED_PIN = 2;
 
-class WifiProvisioningBle {
+class WifiProvisioningBle : public BLEServerCallbacks, public BLECharacteristicCallbacks {
 public:
+    WifiProvisioningBle() = default;
+    ~WifiProvisioningBle() {
+        stopBleProvisioning();
+    }
+
     void begin() {
         pinMode(RESET_BUTTON_PIN, INPUT_PULLUP);
-        pinMode(STATUS_LED_PIN, OUTPUT);
+        pinMode(ONBOARD_LED_PIN, OUTPUT);
 
-        preferences.begin("wifi-config", false);
+        preferences.begin("wifi-config", true);
         String savedSsid = preferences.getString("ssid", "");
+        String savedOwner = preferences.getString("owner", "");
         preferences.end();
 
-        if (savedSsid.length() > 0) {
+        if (savedSsid.length() > 0 && savedOwner.length() > 0) {
             connectToSavedNetwork(savedSsid);
         } else {
             startBleProvisioning();
@@ -39,6 +45,7 @@ public:
 
     void loop() {
         checkResetButton();
+        handleWifiConnectionState();
 
         if (hasPendingScan) {
             hasPendingScan = false;
@@ -46,40 +53,79 @@ public:
         }
         if (hasPendingCredentials) {
             hasPendingCredentials = false;
-            handleCredentials(pendingCredentialsValue);
+            String credsCopy;
+            portENTER_CRITICAL(&spinlock);
+            credsCopy = pendingCredentialsValue;
+            portEXIT_CRITICAL(&spinlock);
+            processCredentials(credsCopy);
         }
     }
 
-    bool isProvisioning() const {
-        return provisioningActive;
+    bool isProvisioning() const { return provisioningActive; }
+    bool isConnected() const { return WiFi.status() == WL_CONNECTED; }
+
+    String getOwnerUid() {
+        preferences.begin("wifi-config", true);
+        String v = preferences.getString("owner", "");
+        preferences.end();
+        return v;
     }
 
-    bool isConnected() const {
-        return WiFi.status() == WL_CONNECTED;
+    String getSavedMacAddress() {
+        preferences.begin("wifi-config", true);
+        String mac = preferences.getString("device_mac", "");
+        preferences.end();
+        return mac;
     }
 
     void clearCredentialsAndReset() {
-        Serial.println("\n*** Factory Reset Triggered ***");
-        Serial.println("Clearing stored Wi-Fi credentials from NVS Flash...");
-
+        Serial.println(F("\n*** Factory Reset Triggered ***"));
         preferences.begin("wifi-config", false);
-        preferences.clear(); 
+        preferences.clear();
         preferences.end();
 
         for (int i = 0; i < 10; i++) {
-            digitalWrite(STATUS_LED_PIN, !digitalRead(STATUS_LED_PIN));
+            digitalWrite(ONBOARD_LED_PIN, !digitalRead(ONBOARD_LED_PIN));
             delay(50);
         }
 
-        Serial.println("Reset complete. Restarting ESP32 into BLE provisioning mode...");
+        Serial.println(F("Reset complete. Restarting ESP32..."));
         delay(500);
         ESP.restart();
     }
 
+    // BLE Callbacks (Reused instances to avoid memory leaks)
+    void onConnect(BLEServer*) override {
+        deviceConnected = true;
+        Serial.println(F("App connected via BLE."));
+    }
+
+    void onDisconnect(BLEServer* s) override {
+        deviceConnected = false;
+        Serial.println(F("App disconnected from BLE. Restarting advertising..."));
+        delay(100);
+        s->startAdvertising();
+    }
+
+    void onWrite(BLECharacteristic *c) override {
+        if (c->getUUID().equals(BLEUUID(CREDENTIALS_CHAR_UUID))) {
+            portENTER_CRITICAL(&spinlock);
+            pendingCredentialsValue = c->getValue().c_str();
+            hasPendingCredentials = true;
+            portEXIT_CRITICAL(&spinlock);
+        } else if (c->getUUID().equals(BLEUUID(SCAN_TRIGGER_CHAR_UUID))) {
+            hasPendingScan = true;
+        }
+    }
+
 private:
     Preferences preferences;
+    portMUX_TYPE spinlock = portMUX_INITIALIZER_UNLOCKED;
+
     bool provisioningActive = false;
     bool deviceConnected = false;
+    bool connectingToWifi = false;
+    unsigned long wifiConnectStart = 0;
 
     volatile bool hasPendingScan = false;
     volatile bool hasPendingCredentials = false;
@@ -94,14 +140,14 @@ private:
             unsigned long pressStart = millis();
             bool confirmed = true;
 
-            Serial.println("\nReset button pressed! Hold for 5 seconds to clear Wi-Fi settings...");
+            Serial.println(F("\nReset button pressed! Hold for 5 seconds..."));
 
             while (millis() - pressStart < HOLD_TIME_MS) {
-                digitalWrite(STATUS_LED_PIN, (millis() / 100) % 2 == 0 ? HIGH : LOW);
+                digitalWrite(ONBOARD_LED_PIN, (millis() / 100) % 2 == 0 ? HIGH : LOW);
 
                 if (digitalRead(RESET_BUTTON_PIN) == HIGH) {
-                    Serial.println("Reset cancelled (button released early).");
-                    digitalWrite(STATUS_LED_PIN, LOW); // Turn off indicator
+                    Serial.println(F("Reset cancelled."));
+                    digitalWrite(ONBOARD_LED_PIN, LOW);
                     confirmed = false;
                     break;
                 }
@@ -124,27 +170,38 @@ private:
         WiFi.mode(WIFI_STA);
         WiFi.begin(ssid.c_str(), password.c_str());
 
-        unsigned long startAttempt = millis();
-        const unsigned long timeoutMs = 15000;
+        connectingToWifi = true;
+        wifiConnectStart = millis();
+    }
 
-        while (WiFi.status() != WL_CONNECTED && millis() - startAttempt < timeoutMs) {
-            checkResetButton(); 
-            delay(300);
-            Serial.print(".");
-        }
+    void handleWifiConnectionState() {
+        if (!connectingToWifi) return;
 
         if (WiFi.status() == WL_CONNECTED) {
-            Serial.println();
-            Serial.printf("Connected. IP: %s\n", WiFi.localIP().toString().c_str());
-        } else {
-            Serial.println();
-            Serial.println("Failed to connect with saved credentials. Starting BLE provisioning.");
-            startBleProvisioning();
+            connectingToWifi = false;
+            Serial.printf("\nConnected. IP: %s\n", WiFi.localIP().toString().c_str());
+            if (provisioningActive) {
+                reportStatus("connected");
+                delay(500);
+                ESP.restart();
+            }
+        } else if (millis() - wifiConnectStart >= 15000) {
+            connectingToWifi = false;
+            Serial.println(F("\nFailed to connect to Wi-Fi."));
+            if (provisioningActive) {
+                reportStatus("connect_failed");
+                WiFi.disconnect(true);
+            } else {
+                startBleProvisioning();
+            }
         }
     }
 
     void startBleProvisioning() {
+        if (provisioningActive) return;
+
         provisioningActive = true;
+        WiFi.mode(WIFI_STA);
 
         uint8_t mac[6];
         WiFi.macAddress(mac);
@@ -155,33 +212,21 @@ private:
         BLEDevice::setMTU(512);
 
         server = BLEDevice::createServer();
-        server->setCallbacks(new ServerCallbacks(this));
+        server->setCallbacks(this);
 
         BLEService *service = server->createService(SERVICE_UUID);
 
-        BLECharacteristic *credentialsCharacteristic = service->createCharacteristic(
-            CREDENTIALS_CHAR_UUID,
-            BLECharacteristic::PROPERTY_WRITE
-        );
-        credentialsCharacteristic->setCallbacks(new CredentialsWriteCallback(this));
+        BLECharacteristic *credentialsChar = service->createCharacteristic(CREDENTIALS_CHAR_UUID, BLECharacteristic::PROPERTY_WRITE);
+        credentialsChar->setCallbacks(this);
 
-        BLECharacteristic *scanTriggerCharacteristic = service->createCharacteristic(
-            SCAN_TRIGGER_CHAR_UUID,
-            BLECharacteristic::PROPERTY_WRITE
-        );
-        scanTriggerCharacteristic->setCallbacks(new ScanTriggerWriteCallback(this));
+        BLECharacteristic *scanTriggerChar = service->createCharacteristic(SCAN_TRIGGER_CHAR_UUID, BLECharacteristic::PROPERTY_WRITE);
+        scanTriggerChar->setCallbacks(this);
 
-        networksCharacteristic = service->createCharacteristic(
-            NETWORKS_CHAR_UUID,
-            BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY
-        );
+        networksCharacteristic = service->createCharacteristic(NETWORKS_CHAR_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
         networksCharacteristic->addDescriptor(new BLE2902());
         networksCharacteristic->setValue("{\"networks\":[]}");
 
-        statusCharacteristic = service->createCharacteristic(
-            STATUS_CHAR_UUID,
-            BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY
-        );
+        statusCharacteristic = service->createCharacteristic(STATUS_CHAR_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
         statusCharacteristic->addDescriptor(new BLE2902());
         statusCharacteristic->setValue("waiting_for_credentials");
 
@@ -195,57 +240,51 @@ private:
         Serial.printf("BLE provisioning started. Advertising as: %s\n", deviceName);
     }
 
-    void onClientConnected() {
-        deviceConnected = true;
-        Serial.println("App connected via BLE.");
+    void stopBleProvisioning() {
+        if (!provisioningActive) return;
+        BLEDevice::deinit(true);
+        provisioningActive = false;
     }
 
-    void onClientDisconnected() {
-        deviceConnected = false;
-        Serial.println("App disconnected from BLE. Restarting advertising...");
-        delay(500);
-        if (server != nullptr) {
-            server->startAdvertising();
-        }
-    }
+    void processCredentials(const String &value) {
+        // Expected payload format: ssid|password|ownerUid|macAddress
+        int first = value.indexOf('|');
+        int second = (first != -1) ? value.indexOf('|', first + 1) : -1;
+        int third = (second != -1) ? value.indexOf('|', second + 1) : -1;
 
-    void handleCredentials(const String &value) {
-        int separatorPos = value.indexOf('|');
-        if (separatorPos == -1) {
+        if (first == -1 || second == -1 || third == -1) {
             reportStatus("error_invalid_format");
             return;
         }
 
-        String ssid = value.substring(0, separatorPos);
-        String password = value.substring(separatorPos + 1);
+        String ssid = value.substring(0, first);
+        String password = value.substring(first + 1, second);
+        String owner = value.substring(second + 1, third);
+        String mac = value.substring(third + 1);
 
-        if (ssid.length() == 0) {
-            reportStatus("error_ssid_required");
+        ssid.trim();
+        owner.trim();
+        mac.trim();
+
+        if (ssid.length() == 0 || owner.length() == 0 || mac.length() == 0) {
+            reportStatus("error_invalid_format");
             return;
         }
+
+        preferences.begin("wifi-config", false);
+        preferences.putString("ssid", ssid);
+        preferences.putString("password", password);
+        preferences.putString("owner", owner);
+        preferences.putString("device_mac", mac); // Store authoritative MAC address
+        preferences.end();
 
         reportStatus("connecting");
 
         WiFi.mode(WIFI_STA);
         WiFi.begin(ssid.c_str(), password.c_str());
 
-        unsigned long start = millis();
-        while (WiFi.status() != WL_CONNECTED && millis() - start < 15000) {
-            delay(300);
-        }
-
-        if (WiFi.status() == WL_CONNECTED) {
-            preferences.begin("wifi-config", false);
-            preferences.putString("ssid", ssid);
-            preferences.putString("password", password);
-            preferences.end();
-            reportStatus("connected");
-            delay(500);
-            ESP.restart();
-        } else {
-            reportStatus("connect_failed");
-            WiFi.disconnect(true);
-        }
+        connectingToWifi = true;
+        wifiConnectStart = millis();
     }
 
     void performScan() {
@@ -255,15 +294,7 @@ private:
         WiFi.disconnect();
         delay(100);
 
-        WiFi.scanNetworks(true, true);
-
-        unsigned long startScanTime = millis();
-        while (WiFi.scanComplete() == WIFI_SCAN_RUNNING && millis() - startScanTime < 10000) {
-            delay(200);
-        }
-
-        int networkCount = WiFi.scanComplete();
-        Serial.printf("Scan finished. Found networks: %d\n", networkCount);
+        int networkCount = WiFi.scanNetworks(false, true);
 
         JsonDocument doc;
         JsonArray networks = doc["networks"].to<JsonArray>();
@@ -280,7 +311,6 @@ private:
 
         String payload;
         serializeJson(doc, payload);
-        Serial.printf("Payload size: %d bytes\n", payload.length());
 
         if (networksCharacteristic != nullptr) {
             networksCharacteristic->setValue(payload.c_str());
@@ -298,36 +328,6 @@ private:
         }
         Serial.printf("Provisioning status: %s\n", status);
     }
-
-    class ServerCallbacks : public BLEServerCallbacks {
-    public:
-        explicit ServerCallbacks(WifiProvisioningBle *owner) : owner(owner) {}
-        void onConnect(BLEServer *pServer) override { owner->onClientConnected(); }
-        void onDisconnect(BLEServer *pServer) override { owner->onClientDisconnected(); }
-    private:
-        WifiProvisioningBle *owner;
-    };
-
-    class CredentialsWriteCallback : public BLECharacteristicCallbacks {
-    public:
-        explicit CredentialsWriteCallback(WifiProvisioningBle *owner) : owner(owner) {}
-        void onWrite(BLECharacteristic *characteristic) override {
-            owner->pendingCredentialsValue = String(characteristic->getValue().c_str());
-            owner->hasPendingCredentials = true;
-        }
-    private:
-        WifiProvisioningBle *owner;
-    };
-
-    class ScanTriggerWriteCallback : public BLECharacteristicCallbacks {
-    public:
-        explicit ScanTriggerWriteCallback(WifiProvisioningBle *owner) : owner(owner) {}
-        void onWrite(BLECharacteristic *characteristic) override {
-            owner->hasPendingScan = true;
-        }
-    private:
-        WifiProvisioningBle *owner;
-    };
 };
 
 #endif
