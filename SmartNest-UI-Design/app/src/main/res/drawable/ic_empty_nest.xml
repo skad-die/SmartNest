@@ -1,0 +1,39 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+    <!-- Ambient aura background circle -->
+    <path
+        android:fillColor="?attr/colorPrimaryContainer"
+        android:pathData="M48,48 M48,16 A32,32 0 1,1 47.99,16 Z" />
+    <!-- Nest base twigs / woven bowl -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M24,56 C28,72 40,76 48,76 C56,76 68,72 72,56"
+        android:strokeWidth="3.5"
+        android:strokeColor="?attr/colorPrimary"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M28,62 C34,70 42,72 48,72 C54,72 62,70 68,62"
+        android:strokeWidth="2.5"
+        android:strokeColor="?attr/colorPrimary"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M20,50 C36,54 60,54 76,50"
+        android:strokeWidth="2.5"
+        android:strokeColor="?attr/colorSecondary"
+        android:strokeLineCap="round" />
+    <!-- Smart glowing egg in the nest -->
+    <path
+        android:fillColor="?attr/colorSecondary"
+        android:pathData="M48,32 C41,32 36,38 36,47 C36,53 41,58 48,58 C55,58 60,53 60,47 C60,38 55,32 48,32 Z" />
+    <!-- Sprout / Signal Leaf -->
+    <path
+        android:fillColor="?attr/colorPrimary"
+        android:pathData="M48,24 C48,24 53,27 53,32 C51.5,32 50,30.5 48,29 C46,30.5 44.5,32 43,32 C43,27 48,24 48,24 Z" />
+</vector>

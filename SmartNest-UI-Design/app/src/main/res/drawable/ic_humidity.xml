@@ -1,0 +1,21 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Water droplet -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M12,2.69 L6.7,8.88 C4.36,11.61 4.36,15.63 6.7,18.36 C9.63,21.78 14.37,21.78 17.3,18.36 C19.64,15.63 19.64,11.61 17.3,8.88 L12,2.69 Z"
+        android:strokeWidth="1.8"
+        android:strokeColor="#89DCEB"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <!-- Inner gloss reflection curve -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M9,13 C9,16 11,18 13.5,18"
+        android:strokeWidth="1.5"
+        android:strokeColor="#89DCEB"
+        android:strokeLineCap="round" />
+</vector>

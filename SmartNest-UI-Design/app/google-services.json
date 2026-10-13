@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "45038245384",
+    "project_id": "smartnest-eldroid",
+    "storage_bucket": "smartnest-eldroid.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:45038245384:android:e49e18481acfae7513e3bd",
+        "android_client_info": {
+          "package_name": "com.eldroid.smartnest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABis1ELSS2RiHpei609494Z6XBES-uCW8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

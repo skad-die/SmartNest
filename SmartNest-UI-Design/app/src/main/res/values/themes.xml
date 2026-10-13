@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme locked to Catppuccin Mocha Dark Mode -->
+    <style name="Base.Theme.SmartNest" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/smartnest_primary</item>
+        <item name="colorOnPrimary">@color/smartnest_on_primary</item>
+        <item name="colorPrimaryContainer">@color/smartnest_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/smartnest_primary</item>
+
+        <item name="colorSecondary">@color/smartnest_secondary</item>
+        <item name="colorOnSecondary">@color/smartnest_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/smartnest_secondary_container</item>
+
+        <item name="colorTertiary">@color/smartnest_tertiary</item>
+        <item name="colorOnTertiary">@color/smartnest_on_tertiary</item>
+        <item name="colorTertiaryContainer">@color/smartnest_tertiary_container</item>
+
+        <item name="colorError">@color/smartnest_error</item>
+        <item name="colorOnError">@color/smartnest_on_error</item>
+        <item name="colorErrorContainer">@color/smartnest_error_container</item>
+
+        <!-- Backgrounds & Surfaces -->
+        <item name="android:colorBackground">@color/smartnest_background</item>
+        <item name="colorOnBackground">@color/smartnest_on_surface</item>
+        <item name="colorSurface">@color/smartnest_surface</item>
+        <item name="colorOnSurface">@color/smartnest_on_surface</item>
+        <item name="colorSurfaceVariant">@color/smartnest_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/smartnest_on_surface_variant</item>
+
+        <item name="colorSurfaceContainer">@color/smartnest_surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/smartnest_surface_container_high</item>
+        <item name="colorSurfaceContainerLow">@color/smartnest_surface_container_low</item>
+
+        <item name="colorOutline">@color/smartnest_outline</item>
+        <item name="colorOutlineVariant">@color/smartnest_outline_variant</item>
+
+        <!-- Window System Bars -->
+        <item name="android:statusBarColor">@color/smartnest_background</item>
+        <item name="android:navigationBarColor">@color/smartnest_background</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
+
+        <!-- Dialog and BottomSheet Corner Customization -->
+        <item name="materialAlertDialogTheme">@style/Theme.SmartNest.Dialog</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.SmartNest.BottomSheet</item>
+    </style>
+
+    <style name="Theme.SmartNest.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="shapeAppearance">@style/ShapeAppearance.SmartNest.Dialog</item>
+        <item name="colorSurface">@color/smartnest_surface_container</item>
+    </style>
+
+    <style name="Theme.SmartNest.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.SmartNest.BottomSheet.Modal</item>
+    </style>
+
+    <style name="Widget.SmartNest.BottomSheet.Modal" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">@color/smartnest_surface</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.SmartNest.BottomSheet</item>
+    </style>
+
+    <style name="ShapeAppearance.SmartNest.Dialog" parent="ShapeAppearance.Material3.Corner.ExtraLarge">
+        <item name="cornerSize">24dp</item>
+    </style>
+
+    <style name="ShapeAppearance.SmartNest.BottomSheet" parent="ShapeAppearance.Material3.Corner.ExtraLarge">
+        <item name="cornerSizeTopLeft">28dp</item>
+        <item name="cornerSizeTopRight">28dp</item>
+    </style>
+
+    <style name="Theme.SmartNest" parent="Base.Theme.SmartNest" />
+</resources>

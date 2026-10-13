@@ -1,0 +1,36 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Nest base bowl / branch curves -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M8,26 C10,36 17,40 24,40 C31,40 38,36 40,26"
+        android:strokeWidth="2.5"
+        android:strokeColor="?attr/colorPrimary"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M12,29 C15,35 20,37 24,37 C28,37 33,35 36,29"
+        android:strokeWidth="2"
+        android:strokeColor="?attr/colorPrimary"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M6,22 C14,24 34,24 42,22"
+        android:strokeWidth="2"
+        android:strokeColor="?attr/colorPrimary"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <!-- Smart Egg / Glow in nest center -->
+    <path
+        android:fillColor="?attr/colorSecondary"
+        android:pathData="M24,10 C20,10 17,14 17,20 C17,24 20,27 24,27 C28,27 31,24 31,20 C31,14 28,10 24,10 Z" />
+    <!-- Smart Sprout / Signal Leaf -->
+    <path
+        android:fillColor="?attr/colorPrimary"
+        android:pathData="M24,6 C24,6 27,8 27,11 C26,11 25,10 24,9 C23,10 22,11 21,11 C21,8 24,6 24,6 Z" />
+</vector>

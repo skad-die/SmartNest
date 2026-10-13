@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand / Primary Accent (Fresh Nest Sage/Mint) -->
+    <color name="smartnest_primary">#a6e3a1</color>
+    <color name="smartnest_primary_dark">#72af6d</color>
+    <color name="smartnest_on_primary">#11111b</color>
+
+    <!-- Secondary Accent (Teal Hydro) -->
+    <color name="smartnest_secondary">#94e2d5</color>
+    <color name="smartnest_on_secondary">#11111b</color>
+
+    <!-- Tertiary Accent (Warm Nest Peach) -->
+    <color name="smartnest_tertiary">#fab387</color>
+    <color name="smartnest_on_tertiary">#11111b</color>
+
+    <!-- Surfaces & Backgrounds -->
+    <color name="smartnest_background">#181825</color>
+    <color name="smartnest_surface">#222334</color>
+    <color name="smartnest_surface_container">#28293d</color>
+    <color name="smartnest_surface_container_low">#1e1e2e</color>
+    <color name="smartnest_surface_container_high">#32344b</color>
+    <color name="smartnest_surface_variant">#3f4158</color>
+
+    <!-- Content & Typography -->
+    <color name="smartnest_on_surface">#cdd6f4</color>
+    <color name="smartnest_on_surface_variant">#a6adc8</color>
+    <color name="smartnest_placeholder">#bac2de</color>
+    <color name="smartnest_outline">#7f849c</color>
+    <color name="smartnest_outline_variant">#3f4158</color>
+
+    <!-- Semantic States -->
+    <color name="smartnest_error">#f38ba8</color>
+    <color name="smartnest_error_container">#381e28</color>
+    <color name="smartnest_on_error">#11111b</color>
+    <color name="smartnest_success">#a6e3a1</color>
+    <color name="smartnest_warning">#f9e2af</color>
+    <color name="smartnest_info">#89b4fa</color>
+
+    <!-- Subtle Tint Overlays -->
+    <color name="smartnest_primary_container">#23382b</color>
+    <color name="smartnest_primary_container_high">#2d4c38</color>
+    <color name="smartnest_secondary_container">#1e3636</color>
+    <color name="smartnest_tertiary_container">#3d2b24</color>
+
+    <!-- Nest Environmental Telemetry Accents -->
+    <color name="sensor_temp_accent">#fab387</color>
+    <color name="sensor_temp_container">#2e221d</color>
+    <color name="sensor_humidity_accent">#89dceb</color>
+    <color name="sensor_humidity_container">#192b36</color>
+    <color name="sensor_air_accent">#a6e3a1</color>
+    <color name="sensor_air_container">#1c3224</color>
+    <color name="sensor_tray_accent">#cba6f7</color>
+    <color name="sensor_tray_container">#292038</color>
+
+    <!-- Status Badges -->
+    <color name="status_online_bg">#1e382b</color>
+    <color name="status_online_text">#a6e3a1</color>
+    <color name="status_offline_bg">#38232a</color>
+    <color name="status_offline_text">#f38ba8</color>
+</resources>
