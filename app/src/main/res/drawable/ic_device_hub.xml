@@ -1,0 +1,24 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="28dp"
+    android:height="28dp"
+    android:viewportWidth="28"
+    android:viewportHeight="28">
+    <!-- Nest Hub device shape (curved smart pod) -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M7,11 C7,7.1 10.1,4 14,4 C17.9,4 21,7.1 21,11 L21,18 C21,21.3 18.3,24 15,24 L13,24 C9.7,24 7,21.3 7,18 Z"
+        android:strokeWidth="2"
+        android:strokeColor="?attr/colorPrimary"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <!-- Center sensor ring / camera / LED pulse -->
+    <path
+        android:fillColor="?attr/colorPrimary"
+        android:pathData="M14,10 A2.5,2.5 0 1,1 14,10.01 Z" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M11,16 C12,17.2 16,17.2 17,16"
+        android:strokeWidth="1.5"
+        android:strokeColor="?attr/colorSecondary"
+        android:strokeLineCap="round" />
+</vector>

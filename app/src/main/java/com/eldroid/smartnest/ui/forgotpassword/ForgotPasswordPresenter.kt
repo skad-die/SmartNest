@@ -42,13 +42,17 @@ class ForgotPasswordPresenter(
                     when (task.exception) {
                         is FirebaseNetworkException ->
                             view?.showGeneralError("Network error. Check your connection and try again.")
+
                         is FirebaseTooManyRequestsException ->
                             view?.showGeneralError("Too many attempts. Please wait a moment and try again.")
+
                         is FirebaseAuthInvalidUserException -> {
                             view?.showRequestSentMessage() // Safe fallback UX practice
                         }
+
                         else -> {
-                            val errorMsg = task.exception?.localizedMessage ?: "Failed to send reset email. Please try again."
+                            val errorMsg = task.exception?.localizedMessage
+                                ?: "Failed to send reset email. Please try again."
                             view?.showGeneralError(errorMsg)
                         }
                     }

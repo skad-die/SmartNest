@@ -98,7 +98,12 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
         ViewCompat.setOnApplyWindowInsetsListener(drawerProfileCard) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(basePaddingLeft, basePaddingTop + systemBars.top, basePaddingRight, basePaddingBottom)
+            view.setPadding(
+                basePaddingLeft,
+                basePaddingTop + systemBars.top,
+                basePaddingRight,
+                basePaddingBottom
+            )
             insets
         }
 
@@ -110,7 +115,8 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             insets
         }
 
-        val fabBaseBottomMargin = (fabAddDevice.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+        val fabBaseBottomMargin =
+            (fabAddDevice.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
         ViewCompat.setOnApplyWindowInsetsListener(fabAddDevice) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             val params = view.layoutParams as ViewGroup.MarginLayoutParams
@@ -139,7 +145,13 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
         navView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_setup_device -> startActivity(Intent(this, SetupDeviceActivity::class.java))
+                R.id.nav_setup_device -> startActivity(
+                    Intent(
+                        this,
+                        SetupDeviceActivity::class.java
+                    )
+                )
+
                 R.id.nav_settings -> startActivity(Intent(this, SettingsActivity::class.java))
                 R.id.nav_logout -> presenter.onLogoutClicked()
             }
@@ -224,13 +236,15 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
 
     override fun showSensorReading(reading: SensorReading) {
         if (currentDialog?.isShowing == true) {
-            tvDialogTemperature.text = getString(R.string.temperature_value, reading.temperatureCelsius)
+            tvDialogTemperature.text =
+                getString(R.string.temperature_value, reading.temperatureCelsius)
             tvDialogHumidity.text = getString(R.string.humidity_value, reading.humidityPercent)
-            tvDialogAirQuality.text = getString(R.string.air_quality_value, reading.airQualityPpm)
+            tvDialogAirQuality.text = getString(R.string.air_quality_value, reading.airQualityAdc)
             tvDialogTrayStatus.text = reading.trayStatus
 
             val formatter = SimpleDateFormat("MMM d, h:mm a", Locale.getDefault())
-            tvDialogLastUpdated.text = getString(R.string.last_updated, formatter.format(Date(reading.timestamp)))
+            tvDialogLastUpdated.text =
+                getString(R.string.last_updated, formatter.format(Date(reading.timestamp)))
         }
     }
 

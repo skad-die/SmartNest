@@ -83,7 +83,12 @@ class DeviceRegistryRepository {
 
         root.updateChildren(updates)
             .addOnSuccessListener { onComplete(true, null) }
-            .addOnFailureListener { e -> onComplete(false, e.message ?: "Failed to unpair device.") }
+            .addOnFailureListener { e ->
+                onComplete(
+                    false,
+                    e.message ?: "Failed to unpair device."
+                )
+            }
     }
 
     fun observeDeviceOnline(

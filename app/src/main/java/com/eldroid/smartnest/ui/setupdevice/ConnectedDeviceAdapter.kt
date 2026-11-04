@@ -55,7 +55,12 @@ class ConnectedDeviceAdapter(
             btnUnpair.setOnClickListener {
                 AlertDialog.Builder(itemView.context)
                     .setTitle(R.string.unpair_title)
-                    .setMessage(itemView.context.getString(R.string.unpair_message, device.displayName))
+                    .setMessage(
+                        itemView.context.getString(
+                            R.string.unpair_message,
+                            device.displayName
+                        )
+                    )
                     .setPositiveButton(R.string.unpair) { _, _ -> onUnpair(device) }
                     .setNegativeButton(android.R.string.cancel, null)
                     .show()

@@ -57,7 +57,7 @@
     <string name="humidity_label">Humidity</string>
     <string name="humidity_value">%.1f %%</string>
     <string name="air_quality_label">Air Quality (Ammonia/VOC)</string>
-    <string name="air_quality_value">%.1f ppm</string>
+    <string name="air_quality_value">%.1f ADC</string>
     <string name="tray_status_label">Tray Status</string>
     <string name="last_updated">Last updated: %s</string>
     <string name="last_updated_short">Updated %s</string>

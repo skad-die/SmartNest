@@ -54,7 +54,10 @@ class SetupDeviceActivity : AppCompatActivity(), SetupDeviceContract.View {
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT)
         } else {
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
         }
 
     private val permissionLauncher = registerForActivityResult(
@@ -174,8 +177,10 @@ class SetupDeviceActivity : AppCompatActivity(), SetupDeviceContract.View {
 
     override fun showConnectedDevices(devices: List<SmartNestDevice>) {
         connectedDeviceAdapter.submitList(devices)
-        layoutEmptyRegistry.visibility = if (devices.isEmpty()) AndroidView.VISIBLE else AndroidView.GONE
-        rvConnectedDevices.visibility = if (devices.isEmpty()) AndroidView.GONE else AndroidView.VISIBLE
+        layoutEmptyRegistry.visibility =
+            if (devices.isEmpty()) AndroidView.VISIBLE else AndroidView.GONE
+        rvConnectedDevices.visibility =
+            if (devices.isEmpty()) AndroidView.GONE else AndroidView.VISIBLE
     }
 
     override fun showRegistryError(message: String) {
@@ -246,7 +251,8 @@ class SetupDeviceActivity : AppCompatActivity(), SetupDeviceContract.View {
     override fun showConfigureSuccess() {
         progressScanning.visibility = AndroidView.GONE
         btnConnect.isEnabled = true
-        Toast.makeText(this, getString(R.string.wifi_updated_successfully), Toast.LENGTH_LONG).show()
+        Toast.makeText(this, getString(R.string.wifi_updated_successfully), Toast.LENGTH_LONG)
+            .show()
         showDeviceRegistryView()
     }
 

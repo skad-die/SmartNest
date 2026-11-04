@@ -53,10 +53,12 @@ class DashboardDeviceAdapter(
         fun bind(item: DashboardDevice) {
             val ctx = itemView.context
             tvName.text = item.device.displayName
-            tvSsid.text = ctx.getString(R.string.connected_to_network, item.device.lastSsid ?: "Unknown")
+            tvSsid.text =
+                ctx.getString(R.string.connected_to_network, item.device.lastSsid ?: "Unknown")
 
             // Bind status chip text and online icon indicator
-            chipStatus.text = ctx.getString(if (item.isOnline) R.string.device_online else R.string.device_offline)
+            chipStatus.text =
+                ctx.getString(if (item.isOnline) R.string.device_online else R.string.device_offline)
 
             ivStatus.setImageResource(
                 if (item.isOnline) android.R.drawable.presence_online

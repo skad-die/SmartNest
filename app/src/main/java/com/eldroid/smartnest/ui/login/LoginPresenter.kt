@@ -55,6 +55,7 @@ class LoginPresenter(
                     val message = when (task.exception) {
                         is FirebaseAuthInvalidUserException,
                         is FirebaseAuthInvalidCredentialsException -> "Incorrect email or password."
+
                         is FirebaseNetworkException -> "Network error. Check your connection and try again."
                         else -> "Unable to log in right now. Please try again."
                     }

@@ -63,7 +63,10 @@ class ProvisioningBottomSheet : BottomSheetDialogFragment(), SetupDeviceContract
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT)
         } else {
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
         }
 
     private val permissionLauncher = registerForActivityResult(
@@ -166,9 +169,14 @@ class ProvisioningBottomSheet : BottomSheetDialogFragment(), SetupDeviceContract
 
     override fun requestBluetoothPermissions() {
         val allGranted = requiredPermissions.all {
-            ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                it
+            ) == PackageManager.PERMISSION_GRANTED
         }
-        if (allGranted) presenter.onPermissionsGranted() else permissionLauncher.launch(requiredPermissions)
+        if (allGranted) presenter.onPermissionsGranted() else permissionLauncher.launch(
+            requiredPermissions
+        )
     }
 
     override fun showProvisioningView() {
@@ -284,7 +292,11 @@ class ProvisioningBottomSheet : BottomSheetDialogFragment(), SetupDeviceContract
 
     override fun showConfigureSuccess() {
         progressConnecting.visibility = View.GONE
-        Toast.makeText(requireContext(), "Device Wi-Fi configured successfully!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            requireContext(),
+            "Device Wi-Fi configured successfully!",
+            Toast.LENGTH_SHORT
+        ).show()
         dismiss()
     }
 

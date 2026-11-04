@@ -44,16 +44,17 @@ class SetupDevicePresenter(
     }
 
     private fun startObservingRegistry() {
-        registryListener = deviceRegistry.observeDevices(object : DeviceRegistryRepository.DeviceListListener {
-            override fun onDevicesChanged(devices: List<SmartNestDevice>) {
-                knownDevices = devices
-                view?.showConnectedDevices(devices)
-            }
+        registryListener =
+            deviceRegistry.observeDevices(object : DeviceRegistryRepository.DeviceListListener {
+                override fun onDevicesChanged(devices: List<SmartNestDevice>) {
+                    knownDevices = devices
+                    view?.showConnectedDevices(devices)
+                }
 
-            override fun onError(message: String) {
-                view?.showRegistryError(message)
-            }
-        })
+                override fun onError(message: String) {
+                    view?.showRegistryError(message)
+                }
+            })
     }
 
     override fun onScreenOpened() {
@@ -229,19 +230,23 @@ class SetupDevicePresenter(
             "connecting" -> {
                 view?.showConfiguring()
             }
+
             "connected" -> {
                 provisioningResolved = true
                 saveDeviceToRegistry()
                 view?.showConfigureSuccess()
             }
+
             "connect_failed" -> {
                 provisioningResolved = true
                 view?.showConfigureError("Couldn't connect with that password. Please check it and try again.")
             }
+
             "error_invalid_format" -> {
                 provisioningResolved = true
                 view?.showConfigureError("Something went wrong sending credentials. Please try again.")
             }
+
             "error_ssid_required" -> {
                 provisioningResolved = true
                 view?.showConfigureError("Network name was empty. Please select a network and try again.")

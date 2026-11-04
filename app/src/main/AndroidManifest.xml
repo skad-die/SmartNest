@@ -7,7 +7,10 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <!-- Modern Bluetooth Permissions for Android 12 (API 31+) -->
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" tools:targetApi="31" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="31" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />

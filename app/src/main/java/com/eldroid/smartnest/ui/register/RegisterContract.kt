@@ -20,7 +20,13 @@ interface RegisterContract {
     interface Presenter {
         fun attachView(view: View)
         fun detachView()
-        fun onRegisterClicked(name: String, email: String, password: String, confirmPassword: String)
+        fun onRegisterClicked(
+            name: String,
+            email: String,
+            password: String,
+            confirmPassword: String
+        )
+
         fun onLoginLinkClicked()
     }
 }

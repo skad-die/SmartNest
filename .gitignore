@@ -16,3 +16,4 @@ local.properties
 .idea/
 secrets.h
 smartnest-firmware/secrets.h
+**/secrets.h

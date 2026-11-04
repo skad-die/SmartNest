@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawerLayout"
@@ -26,7 +25,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:navigationIcon="@android:drawable/ic_menu_sort_by_size"
+                app:navigationIcon="@drawable/ic_menu_hamburger"
                 app:navigationIconTint="?attr/colorOnSurface"
                 app:title="@string/app_name"
                 app:titleCentered="false"
@@ -48,26 +47,83 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingHorizontal="@dimen/screen_padding"
-                android:paddingVertical="@dimen/screen_padding">
+                android:paddingTop="12dp"
+                android:paddingBottom="@dimen/screen_padding">
 
-                <TextView
-                    android:id="@+id/tvHeader"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="@string/dashboard_title"
-                    android:textColor="?attr/colorOnBackground"
-                    android:textSize="@dimen/text_size_title" />
-
-                <TextView
+                <!-- Dashboard Header Card / Title Banner -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/element_spacing_medium"
-                    android:layout_marginBottom="@dimen/element_spacing_medium"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="@string/my_devices"
-                    android:textColor="?attr/colorPrimary"
-                    android:textSize="@dimen/text_size_subtitle" />
+                    android:layout_marginBottom="20dp"
+                    app:cardBackgroundColor="?attr/colorSurfaceContainer"
+                    app:cardCornerRadius="@dimen/card_corner_radius"
+                    app:cardElevation="0dp"
+                    app:strokeColor="?attr/colorOutlineVariant"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="18dp">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvHeader"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="@string/dashboard_title"
+                                android:textColor="?attr/colorOnSurface"
+                                android:textSize="@dimen/text_size_title" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="sans-serif"
+                                android:text="Live telemetry &amp; cage environment status"
+                                android:textColor="?attr/colorOutline"
+                                android:textSize="@dimen/text_size_helper" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:layout_marginStart="12dp"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_smartnest_logo" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Section Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/my_devices"
+                        android:textColor="?attr/colorPrimary"
+                        android:textSize="@dimen/text_size_subtitle" />
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:background="@drawable/bg_status_dot_connected" />
+                </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvDevices"
@@ -79,6 +135,7 @@
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
+        <!-- Empty State View -->
         <LinearLayout
             android:id="@+id/layoutEmptyDashboard"
             android:layout_width="match_parent"
@@ -90,17 +147,15 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:alpha="0.4"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
                 android:contentDescription="@null"
-                android:src="@android:drawable/ic_menu_manage"
-                app:tint="?attr/colorOutline" />
+                android:src="@drawable/ic_empty_nest" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/element_spacing_large"
+                android:layout_marginTop="20dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:text="@string/dashboard_empty_title"
@@ -110,13 +165,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/element_spacing_small"
+                android:layout_marginTop="8dp"
                 android:gravity="center"
+                android:lineSpacingExtra="2dp"
+                android:maxWidth="280dp"
                 android:text="@string/dashboard_empty_subtitle"
                 android:textColor="?attr/colorOutline"
                 android:textSize="@dimen/text_size_subtitle" />
         </LinearLayout>
 
+        <!-- Floating Action Button -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabAddDevice"
             android:layout_width="wrap_content"
@@ -124,8 +182,9 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/element_spacing_large"
             android:contentDescription="@string/add_new_device"
-            android:src="@android:drawable/ic_input_add"
+            android:src="@drawable/ic_add"
             app:backgroundTint="?attr/colorPrimary"
+            app:elevation="6dp"
             app:tint="?attr/colorOnPrimary" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

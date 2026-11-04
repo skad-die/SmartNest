@@ -1,0 +1,30 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Hub / smart router / antenna box -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M4,15 C4,13.9 4.9,13 6,13 L18,13 C19.1,13 20,13.9 20,15 L20,19 C20,20.1 19.1,21 18,21 L6,21 C4.9,21 4,20.1 4,19 Z"
+        android:strokeWidth="2"
+        android:strokeColor="?attr/colorPrimary"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:fillColor="?attr/colorPrimary"
+        android:pathData="M8,17 A1,1 0 1,1 8,17.01 Z M12,17 A1,1 0 1,1 12,17.01 Z M16,17 A1,1 0 1,1 16,17.01 Z" />
+    <!-- Antennas / wireless waves -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M7,13 L7,8 M17,13 L17,8"
+        android:strokeWidth="2"
+        android:strokeColor="?attr/colorPrimary"
+        android:strokeLineCap="round" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M10,6 C11.2,4.8 12.8,4.8 14,6"
+        android:strokeWidth="2"
+        android:strokeColor="?attr/colorPrimary"
+        android:strokeLineCap="round" />
+</vector>

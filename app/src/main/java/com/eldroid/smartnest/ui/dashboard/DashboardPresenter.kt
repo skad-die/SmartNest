@@ -28,7 +28,8 @@ class DashboardPresenter(
     // registry + per-device status
     private var registryListener: ValueEventListener? = null
     private val statusListeners = mutableMapOf<String, ValueEventListener>()
-    private val rawStatus = mutableMapOf<String, Pair<String?, Long?>>()   // key -> (state, lastSeen)
+    private val rawStatus =
+        mutableMapOf<String, Pair<String?, Long?>>()   // key -> (state, lastSeen)
     private var devices: List<SmartNestDevice> = emptyList()
 
     // Firebase server clock offset
@@ -104,30 +105,31 @@ class DashboardPresenter(
     }
 
     private fun listenForDevices() {
-        registryListener = registry.observeDevices(object : DeviceRegistryRepository.DeviceListListener {
-            override fun onDevicesChanged(devices: List<SmartNestDevice>) {
-                this@DashboardPresenter.devices = devices
-                stopStatusListeners()
+        registryListener =
+            registry.observeDevices(object : DeviceRegistryRepository.DeviceListListener {
+                override fun onDevicesChanged(devices: List<SmartNestDevice>) {
+                    this@DashboardPresenter.devices = devices
+                    stopStatusListeners()
 
-                if (devices.isEmpty()) {
-                    view?.showEmptyState()
-                    return
+                    if (devices.isEmpty()) {
+                        view?.showEmptyState()
+                        return
+                    }
+
+                    devices.forEach { device ->
+                        val key = SmartNestDevice.keyFor(device.macAddress)
+                        registry.observeDeviceStatus(key) { state, lastSeen ->
+                            rawStatus[key] = state to lastSeen
+                            publishDevices()
+                        }?.let { statusListeners[key] = it }
+                    }
+                    publishDevices()
                 }
 
-                devices.forEach { device ->
-                    val key = SmartNestDevice.keyFor(device.macAddress)
-                    registry.observeDeviceStatus(key) { state, lastSeen ->
-                        rawStatus[key] = state to lastSeen
-                        publishDevices()
-                    }?.let { statusListeners[key] = it }
+                override fun onError(message: String) {
+                    view?.showLoadError(message)
                 }
-                publishDevices()
-            }
-
-            override fun onError(message: String) {
-                view?.showLoadError(message)
-            }
-        })
+            })
     }
 
     private fun publishDevices() {
@@ -155,7 +157,12 @@ class DashboardPresenter(
     }
 
     private fun stopStatusListeners() {
-        statusListeners.forEach { (key, listener) -> registry.stopObservingOnlineStatus(key, listener) }
+        statusListeners.forEach { (key, listener) ->
+            registry.stopObservingOnlineStatus(
+                key,
+                listener
+            )
+        }
         statusListeners.clear()
         rawStatus.clear()
     }

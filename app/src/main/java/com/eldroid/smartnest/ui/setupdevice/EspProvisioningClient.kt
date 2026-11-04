@@ -74,7 +74,8 @@ class EspBleProvisioningClient(private val context: Context) {
         scanning = false
         try {
             scanner?.stopScan(scanCallback)
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+        }
         listener?.onScanFinished()
     }
 
@@ -120,7 +121,11 @@ class EspBleProvisioningClient(private val context: Context) {
 
         val payload = byteArrayOf(1)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            gatt?.writeCharacteristic(characteristic, payload, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT)
+            gatt?.writeCharacteristic(
+                characteristic,
+                payload,
+                BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+            )
         } else {
             @Suppress("DEPRECATION")
             characteristic.value = payload
@@ -142,7 +147,11 @@ class EspBleProvisioningClient(private val context: Context) {
         // Include device MAC address as the 4th parameter in payload format: ssid|password|ownerUid|macAddress
         val payload = "$ssid|$password|$ownerUid|$macAddress".toByteArray(Charsets.UTF_8)
         val queued = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            gatt?.writeCharacteristic(characteristic, payload, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT) == BluetoothStatusCodes.SUCCESS
+            gatt?.writeCharacteristic(
+                characteristic,
+                payload,
+                BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+            ) == BluetoothStatusCodes.SUCCESS
         } else {
             @Suppress("DEPRECATION")
             characteristic.value = payload
@@ -160,7 +169,8 @@ class EspBleProvisioningClient(private val context: Context) {
         try {
             gatt?.disconnect()
             gatt?.close()
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+        }
         gatt = null
     }
 
@@ -247,16 +257,27 @@ class EspBleProvisioningClient(private val context: Context) {
             }
         }
 
-        override fun onDescriptorWrite(g: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
+        override fun onDescriptorWrite(
+            g: BluetoothGatt,
+            descriptor: BluetoothGattDescriptor,
+            status: Int
+        ) {
             processNextNotificationInQueue(g)
         }
 
-        override fun onCharacteristicChanged(g: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
+        override fun onCharacteristicChanged(
+            g: BluetoothGatt,
+            characteristic: BluetoothGattCharacteristic
+        ) {
             @Suppress("DEPRECATION")
             handleCharacteristicChanged(characteristic.uuid, characteristic.value)
         }
 
-        override fun onCharacteristicChanged(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, value: ByteArray) {
+        override fun onCharacteristicChanged(
+            gatt: BluetoothGatt,
+            characteristic: BluetoothGattCharacteristic,
+            value: ByteArray
+        ) {
             handleCharacteristicChanged(characteristic.uuid, value)
         }
 
@@ -267,6 +288,7 @@ class EspBleProvisioningClient(private val context: Context) {
                     val statusStr = String(value, Charsets.UTF_8)
                     handler.post { listener?.onStatusUpdate(statusStr) }
                 }
+
                 NETWORKS_CHAR_UUID -> {
                     val json = String(value, Charsets.UTF_8)
                     handler.post { listener?.onNetworksReceived(json) }
