@@ -78,7 +78,8 @@ class DeviceRegistryRepository {
         val updates = hashMapOf<String, Any?>(
             "commands/$key/unpair" to true,
             "registry/$key" to null,
-            "status/$key" to null
+            "status/$key" to null,
+            "history/$key" to null
         )
 
         root.updateChildren(updates)

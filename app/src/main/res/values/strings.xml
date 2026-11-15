@@ -127,4 +127,42 @@
     <string name="status_online_badge">ONLINE</string>
     <string name="provisioning_subtitle">Pair your SmartNest hub via Bluetooth &amp; configure Wi-Fi</string>
 
+    <!-- History -->
+    <string name="history_title">History</string>
+    <string name="history_tab_readings">Readings</string>
+    <string name="history_tab_alerts">Alerts</string>
+    <string name="history_range_day">Last 24 hours</string>
+    <string name="history_range_week">Last 7 days</string>
+    <string name="history_empty_readings_title">No readings yet</string>
+    <string name="history_empty_readings_subtitle">Your device saves a reading every 5 minutes while it is online.</string>
+    <string name="history_empty_alerts_title">No alerts</string>
+    <string name="history_empty_alerts_subtitle">Nothing went out of range in this period.</string>
+    <string name="history_error_title">Couldn\'t load history</string>
+
+    <!-- Alerts -->
+    <string name="alert_high_temp_title">High temperature</string>
+    <string name="alert_high_temp_message">Temperature reached %.1f \u00B0C.</string>
+    <string name="alert_low_humidity_title">Low humidity</string>
+    <string name="alert_low_humidity_message">Humidity dropped to %.1f %%.</string>
+    <string name="alert_high_humidity_title">High humidity</string>
+    <string name="alert_high_humidity_message">Humidity rose to %.1f %%.</string>
+    <string name="alert_poor_air_title">Poor air quality</string>
+    <string name="alert_poor_air_message">Air quality reading reached %.0f ADC.</string>
+    <string name="alert_tray_dirty_title">Tray needs cleaning</string>
+    <string name="alert_tray_dirty_message">The tray sensor detected that the tray needs cleaning.</string>
+    <string name="alert_unknown_title">Cage alert</string>
+    <string name="alert_unknown_message">Your device reported a problem.</string>
+    <string name="alert_notification_title">%1$s \u2022 %2$s</string>
+    <string name="alert_default_device_name">SmartNest device</string>
+    <string name="alert_channel_alerts_name">Cage alerts</string>
+    <string name="alert_channel_alerts_description">Temperature, humidity, air quality and tray alerts from your devices</string>
+    <string name="alert_channel_monitoring_name">Alert monitoring</string>
+    <string name="alert_channel_monitoring_description">Shown while SmartNest is watching your devices for alerts</string>
+    <string name="alert_monitoring_title">SmartNest alerts are on</string>
+    <string name="alert_monitoring_text">Watching your devices for cage alerts</string>
+    <string name="settings_section_notifications">NOTIFICATIONS</string>
+    <string name="settings_mobile_alerts_title">Mobile alerts</string>
+    <string name="settings_mobile_alerts_subtitle">Notify me when a cage reading goes out of range</string>
+    <string name="notification_permission_denied">Notifications are blocked. Allow them in system settings to receive alerts.</string>
+
 </resources>

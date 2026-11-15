@@ -5,6 +5,9 @@ interface SettingsContract {
     interface View {
         fun navigateToChangePassword()
         fun navigateBack()
+        fun showAlertsEnabled(enabled: Boolean)
+        fun startAlertMonitoring()
+        fun stopAlertMonitoring()
     }
 
     interface Presenter {
@@ -12,5 +15,6 @@ interface SettingsContract {
         fun detachView()
         fun onChangePasswordClicked()
         fun onBackClicked()
+        fun onAlertsToggled(enabled: Boolean)
     }
 }

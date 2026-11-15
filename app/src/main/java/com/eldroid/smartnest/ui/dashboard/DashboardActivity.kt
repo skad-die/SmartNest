@@ -1,6 +1,8 @@
 package com.eldroid.smartnest.ui.dashboard
 
+import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -18,8 +21,12 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.eldroid.smartnest.R
+import com.eldroid.smartnest.alerts.AlertMonitorService
+import com.eldroid.smartnest.alerts.AlertNotifier
+import com.eldroid.smartnest.alerts.AlertPrefs
 import com.eldroid.smartnest.data.model.SensorReading
 import com.eldroid.smartnest.data.model.SmartNestDevice
+import com.eldroid.smartnest.ui.history.HistoryActivity
 import com.eldroid.smartnest.ui.login.LoginActivity
 import com.eldroid.smartnest.ui.settings.SettingsActivity
 import com.eldroid.smartnest.ui.setupdevice.ProvisioningBottomSheet
@@ -42,6 +49,10 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
             confirmUnpairDevice(device)
         }
     )
+
+    // The result does not matter here: monitoring runs either way, and Settings explains a denial.
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navView: NavigationView
@@ -186,6 +197,15 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
         currentDialog = AlertDialog.Builder(this)
             .setView(dialogView)
             .setPositiveButton("Close", null)
+            .setNeutralButton(R.string.history_title) { _, _ ->
+                startActivity(
+                    HistoryActivity.intent(
+                        this,
+                        SmartNestDevice.keyFor(device.device.macAddress),
+                        device.device.displayName
+                    )
+                )
+            }
             .create()
 
         currentDialog?.setOnDismissListener {
@@ -222,6 +242,23 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
     override fun onStart() {
         super.onStart()
         presenter.startListening()
+        startAlertMonitoring()
+    }
+
+    private fun startAlertMonitoring() {
+        val prefs = AlertPrefs(this)
+        if (!prefs.alertsEnabled) return
+
+        // Ask for the Android 13+ notification permission once; Settings can ask again later.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            !prefs.permissionRequested &&
+            !AlertNotifier(this).canPostNotifications()
+        ) {
+            prefs.permissionRequested = true
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        AlertMonitorService.start(this)
     }
 
     override fun onStop() {
@@ -281,6 +318,7 @@ class DashboardActivity : AppCompatActivity(), DashboardContract.View {
     }
 
     override fun navigateToLogin() {
+        AlertMonitorService.stop(this)
         val intent = Intent(this, LoginActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }

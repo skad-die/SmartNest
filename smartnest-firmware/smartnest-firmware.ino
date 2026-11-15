@@ -48,6 +48,9 @@ String statusPath;
 String unpairPath;
 
 String sensorDataPath;
+String historyPath;
+String alertsPath;
+String deviceMacKey;
 
 float latestTemperature = 0.0;
 float latestHumidity = 0.0;
@@ -59,6 +62,29 @@ unsigned long lastHeartbeat = 0;
 bool firstHeartbeatSent = false;
 unsigned long lastSensorUpload = 0;
 constexpr unsigned long HEARTBEAT_INTERVAL_MS = 10000;
+
+// Historical logs: one sensor snapshot is appended every HISTORY_INTERVAL_MS
+unsigned long lastHistoryLog = 0;
+bool firstHistoryLogged = false;
+constexpr unsigned long HISTORY_INTERVAL_MS = 5UL * 60UL * 1000UL;
+
+// Alert events: one entry is appended when a condition turns on, at most once
+// per ALERT_COOLDOWN_MS for each type so a value hovering at the limit does not spam.
+enum AlertType { ALERT_HIGH_TEMP, ALERT_LOW_HUMIDITY, ALERT_HIGH_HUMIDITY, ALERT_POOR_AIR, ALERT_TRAY_DIRTY, ALERT_TYPE_COUNT };
+const char *const ALERT_TYPE_NAMES[ALERT_TYPE_COUNT] = {
+  "HIGH_TEMP", "LOW_HUMIDITY", "HIGH_HUMIDITY", "POOR_AIR", "TRAY_DIRTY"
+};
+bool alertActive[ALERT_TYPE_COUNT] = { false };     // latest condition from readSensors()
+bool alertReported[ALERT_TYPE_COUNT] = { false };   // condition state last sent to Firebase
+unsigned long lastAlertSent[ALERT_TYPE_COUNT] = { 0 };
+bool alertEverSent[ALERT_TYPE_COUNT] = { false };
+constexpr unsigned long ALERT_COOLDOWN_MS = 5UL * 60UL * 1000UL;
+
+// Failed history/alert writes are retried no more often than this
+constexpr unsigned long LOG_RETRY_MS = 30000;
+unsigned long lastHistoryAttempt = 0;
+unsigned long lastAlertFailure = 0;
+bool alertWriteFailed = false;
 constexpr int DELETE_RETRIES = 3;
 
 
@@ -88,6 +114,9 @@ void setupFirebase() {
   statusPath = "/devices/" + owner + "/status/" + macKey;
   unpairPath = "/devices/" + owner + "/commands/" + macKey + "/unpair";
   sensorDataPath = "/devices/" + owner + "/current_status";
+  historyPath = "/devices/" + owner + "/history/" + macKey;
+  alertsPath = "/devices/" + owner + "/alerts";
+  deviceMacKey = macKey;
 
   fbConfig.database_url = FIREBASE_DATABASE_URL;
   fbConfig.signer.tokens.legacy_token = FIREBASE_API_KEY;   // database secret (rotate it, keep it out of git)
@@ -121,23 +150,85 @@ void reportHeartbeat() {
   }
 }
 
-void uploadSensorData() {
-  if (!latestDhtValid) return;
-
-  FirebaseJson json;
-
+void buildSensorJson(FirebaseJson &json) {
   json.set("temperatureCelsius", latestTemperature);
   json.set("humidityPercent", latestHumidity);
   json.set("airQualityAdc", latestAirReading);
   json.set("trayStatus", latestTrayStatus);
   json.set("timestamp/.sv", "timestamp");
   json.set("deviceOnline", true);
+}
+
+void uploadSensorData() {
+  if (!latestDhtValid) return;
+
+  FirebaseJson json;
+  buildSensorJson(json);
 
   if (!Firebase.setJSON(fbdo, sensorDataPath.c_str(), json)) {
     Serial.printf("Sensor upload failed: %s\n",
                   fbdo.errorReason().c_str());
   } else {
     Serial.println("Sensor data uploaded successfully.");
+  }
+}
+
+// Appends one sensor snapshot to /devices/{uid}/history/{mac}. Returns false if it should be retried.
+bool logReading() {
+  if (!latestDhtValid) return false;
+
+  FirebaseJson json;
+  buildSensorJson(json);
+
+  if (!Firebase.pushJSON(fbdo, historyPath.c_str(), json)) {
+    Serial.printf("History log failed: %s\n", fbdo.errorReason().c_str());
+    return false;
+  }
+  Serial.println(F("History reading logged."));
+  return true;
+}
+
+float alertValue(int type) {
+  switch (type) {
+    case ALERT_HIGH_TEMP:     return latestTemperature;
+    case ALERT_LOW_HUMIDITY:
+    case ALERT_HIGH_HUMIDITY: return latestHumidity;
+    case ALERT_POOR_AIR:      return latestAirReading;
+    default:                  return 0;
+  }
+}
+
+// Appends an entry to /devices/{uid}/alerts for each condition that has just turned on.
+void checkAlerts() {
+  unsigned long now = millis();
+  if (alertWriteFailed && now - lastAlertFailure < LOG_RETRY_MS) return;
+  alertWriteFailed = false;
+
+  for (int type = 0; type < ALERT_TYPE_COUNT; type++) {
+    if (!alertActive[type]) {
+      alertReported[type] = false;
+      continue;
+    }
+    if (alertReported[type]) continue;
+    if (alertEverSent[type] && now - lastAlertSent[type] < ALERT_COOLDOWN_MS) continue;
+
+    FirebaseJson json;
+    json.set("macKey", deviceMacKey);
+    json.set("type", ALERT_TYPE_NAMES[type]);
+    json.set("value", alertValue(type));
+    json.set("timestamp/.sv", "timestamp");
+
+    if (Firebase.pushJSON(fbdo, alertsPath.c_str(), json)) {
+      alertReported[type] = true;
+      alertEverSent[type] = true;
+      lastAlertSent[type] = now;
+      Serial.printf("Alert logged: %s\n", ALERT_TYPE_NAMES[type]);
+    } else {
+      Serial.printf("Alert log failed: %s\n", fbdo.errorReason().c_str());
+      alertWriteFailed = true;
+      lastAlertFailure = now;
+      return;
+    }
   }
 }
 
@@ -221,6 +312,12 @@ latestDhtValid = dhtValid;
       dhtValid && humidity <= LOW_HUMIDITY_LIMIT;
   bool highHumidity =
     dhtValid && humidity >= HIGH_HUMIDITY_LIMIT;
+
+  alertActive[ALERT_HIGH_TEMP] = highTemp;
+  alertActive[ALERT_LOW_HUMIDITY] = lowHumidity;
+  alertActive[ALERT_HIGH_HUMIDITY] = highHumidity;
+  alertActive[ALERT_POOR_AIR] = poorAir;
+  alertActive[ALERT_TRAY_DIRTY] = trayDirty;
 
   // Control LEDs
   digitalWrite(LED_AIR, poorAir ? HIGH : LOW);
@@ -309,6 +406,18 @@ void loop() {
   lastSensorUpload = now;
   uploadSensorData();
 }
+
+  checkAlerts();
+
+  bool historyDue = !firstHistoryLogged || now - lastHistoryLog >= HISTORY_INTERVAL_MS;
+  bool retryAllowed = lastHistoryAttempt == 0 || now - lastHistoryAttempt >= LOG_RETRY_MS;
+  if (historyDue && retryAllowed) {
+    lastHistoryAttempt = now;
+    if (logReading()) {
+      firstHistoryLogged = true;
+      lastHistoryLog = now;
+    }
+  }
 
   
 }
