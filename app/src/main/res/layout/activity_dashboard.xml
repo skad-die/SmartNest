@@ -39,7 +39,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:paddingBottom="96dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
@@ -88,7 +88,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
                                 android:fontFamily="sans-serif"
-                                android:text="Live telemetry &amp; cage environment status"
+                                android:text="@string/dashboard_subtitle"
                                 android:textColor="?attr/colorOutline"
                                 android:textSize="@dimen/text_size_helper" />
                         </LinearLayout>

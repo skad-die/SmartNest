@@ -10,6 +10,7 @@
 
     <!-- Dialog Header -->
     <LinearLayout
+        android:baselineAligned="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="18dp"
@@ -220,7 +221,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-medium"
-                        android:text="Air Quality"
+                        android:text="@string/air_quality_short_label"
                         android:textColor="@color/sensor_air_accent"
                         android:textSize="11sp" />
                 </LinearLayout>

@@ -25,6 +25,7 @@
 
         <!-- Header Title matching Dashboard tvHeader style -->
         <LinearLayout
+            android:baselineAligned="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -66,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:fontFamily="sans-serif"
-                    android:text="Pair your SmartNest hub via Bluetooth &amp; configure Wi-Fi"
+                    android:text="@string/provisioning_subtitle"
                     android:textColor="?attr/colorOutline"
                     android:textSize="12sp" />
             </LinearLayout>

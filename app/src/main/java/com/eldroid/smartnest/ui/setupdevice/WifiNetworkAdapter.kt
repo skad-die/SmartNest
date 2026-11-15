@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.eldroid.smartnest.R
 import com.eldroid.smartnest.data.model.WifiNetwork
@@ -16,9 +17,18 @@ class WifiNetworkAdapter(
     private val networks = mutableListOf<WifiNetwork>()
 
     fun submitList(newNetworks: List<WifiNetwork>) {
+        val oldItems = networks.toList()
+        val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize() = oldItems.size
+            override fun getNewListSize() = newNetworks.size
+            override fun areItemsTheSame(oldPos: Int, newPos: Int) =
+                oldItems[oldPos].ssid == newNetworks[newPos].ssid
+            override fun areContentsTheSame(oldPos: Int, newPos: Int) =
+                oldItems[oldPos] == newNetworks[newPos]
+        })
         networks.clear()
         networks.addAll(newNetworks)
-        notifyDataSetChanged()
+        diff.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

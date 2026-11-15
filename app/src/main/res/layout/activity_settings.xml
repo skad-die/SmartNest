@@ -32,7 +32,7 @@
             android:layout_marginBottom="12dp"
             android:fontFamily="sans-serif-medium"
             android:letterSpacing="0.04"
-            android:text="ACCOUNT &amp; SECURITY"
+            android:text="@string/settings_section_account"
             android:textColor="?attr/colorPrimary"
             android:textSize="12sp" />
 
@@ -115,7 +115,7 @@
             android:layout_marginBottom="12dp"
             android:fontFamily="sans-serif-medium"
             android:letterSpacing="0.04"
-            android:text="DEVICE ECOSYSTEM"
+            android:text="@string/settings_section_devices"
             android:textColor="?attr/colorPrimary"
             android:textSize="12sp" />
 
@@ -129,6 +129,7 @@
             app:strokeWidth="1dp">
 
             <LinearLayout
+                android:baselineAligned="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
@@ -169,7 +170,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:fontFamily="sans-serif"
-                        android:text="Version 1.0 • SmartNest Habitat IoT"
+                        android:text="@string/settings_version_footer"
                         android:textColor="?attr/colorOutline"
                         android:textSize="12sp" />
                 </LinearLayout>

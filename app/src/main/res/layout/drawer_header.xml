@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:letterSpacing="0.04"
-                android:text="ONLINE"
+                android:text="@string/status_online_badge"
                 android:textColor="?attr/colorPrimary"
                 android:textSize="11sp" />
         </LinearLayout>

@@ -34,6 +34,12 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Already signed in: go straight to the dashboard without drawing the login form.
+        presenter.attachView(this)
+        presenter.checkExistingSession()
+        if (isFinishing) return
+
         setContentView(R.layout.activity_login)
 
         tilEmail = findViewById(R.id.tilEmail)
@@ -46,8 +52,6 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
         tvForgotPassword = findViewById(R.id.tvForgotPassword)
         tvLoginError = findViewById(R.id.tvLoginError)
         progressBar = findViewById(R.id.progressBar)
-
-        presenter.attachView(this)
 
         btnLogin.setOnClickListener {
             hideKeyboard()
@@ -107,9 +111,9 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
     }
 
     override fun navigateToDashboard() {
-        val intent = Intent(this, DashboardActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
+        // Login is the task root here, so a plain start + finish is enough. CLEAR_TASK tears
+        // the task down first, which briefly shows a blank window during the transition.
+        startActivity(Intent(this, DashboardActivity::class.java))
         finish()
     }
 

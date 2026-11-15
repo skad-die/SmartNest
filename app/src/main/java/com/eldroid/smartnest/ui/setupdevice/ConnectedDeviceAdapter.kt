@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.eldroid.smartnest.R
 import com.eldroid.smartnest.data.model.SmartNestDevice
@@ -18,9 +19,18 @@ class ConnectedDeviceAdapter(
     private val devices = mutableListOf<SmartNestDevice>()
 
     fun submitList(newDevices: List<SmartNestDevice>) {
+        val oldItems = devices.toList()
+        val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize() = oldItems.size
+            override fun getNewListSize() = newDevices.size
+            override fun areItemsTheSame(oldPos: Int, newPos: Int) =
+                oldItems[oldPos].macAddress == newDevices[newPos].macAddress
+            override fun areContentsTheSame(oldPos: Int, newPos: Int) =
+                oldItems[oldPos] == newDevices[newPos]
+        })
         devices.clear()
         devices.addAll(newDevices)
-        notifyDataSetChanged()
+        diff.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

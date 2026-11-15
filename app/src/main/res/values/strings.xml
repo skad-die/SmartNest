@@ -119,4 +119,12 @@
     <string name="confirm_new_password">Confirm New Password</string>
     <string name="update_password">Update Password</string>
 
+    <string name="dashboard_subtitle">Live telemetry &amp; cage environment status</string>
+    <string name="settings_section_account">ACCOUNT &amp; SECURITY</string>
+    <string name="settings_section_devices">DEVICE ECOSYSTEM</string>
+    <string name="settings_version_footer">Version 1.0 • SmartNest Habitat IoT</string>
+    <string name="air_quality_short_label">Air Quality</string>
+    <string name="status_online_badge">ONLINE</string>
+    <string name="provisioning_subtitle">Pair your SmartNest hub via Bluetooth &amp; configure Wi-Fi</string>
+
 </resources>

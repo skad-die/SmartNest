@@ -102,11 +102,7 @@ class EspBleProvisioningClient(private val context: Context) {
 
     @SuppressLint("MissingPermission")
     fun connect(device: BluetoothDevice) {
-        gatt = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            device.connectGatt(context, false, gattCallback, BluetoothDevice.TRANSPORT_LE)
-        } else {
-            device.connectGatt(context, false, gattCallback)
-        }
+        gatt = device.connectGatt(context, false, gattCallback, BluetoothDevice.TRANSPORT_LE)
     }
 
     @SuppressLint("MissingPermission")
@@ -195,12 +191,8 @@ class EspBleProvisioningClient(private val context: Context) {
         @SuppressLint("MissingPermission")
         override fun onServicesDiscovered(g: BluetoothGatt, status: Int) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    val requested = g.requestMtu(512)
-                    if (!requested) {
-                        proceedWithNotifications(g)
-                    }
-                } else {
+                val requested = g.requestMtu(512)
+                if (!requested) {
                     proceedWithNotifications(g)
                 }
             } else {

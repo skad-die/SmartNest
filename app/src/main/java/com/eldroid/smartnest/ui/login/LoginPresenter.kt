@@ -48,10 +48,11 @@ class LoginPresenter(
 
         auth.signInWithEmailAndPassword(trimmedEmail, trimmedPassword)
             .addOnCompleteListener { task ->
-                view?.hideLoading()
                 if (task.isSuccessful) {
+                    // Keep the loading state up until the dashboard takes over.
                     view?.navigateToDashboard()
                 } else {
+                    view?.hideLoading()
                     val message = when (task.exception) {
                         is FirebaseAuthInvalidUserException,
                         is FirebaseAuthInvalidCredentialsException -> "Incorrect email or password."
